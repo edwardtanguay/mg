@@ -90,12 +90,6 @@ function renderArticles() {
                   <line x1="10" y1="14" x2="21" y2="3"></line>
                 </svg>
               </a>
-              <button type="button" class="article-btn article-btn--collapse js-article-collapse" aria-label="Artikel einklappen">
-                <span>Einklappen</span>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <polyline points="18 15 12 9 6 15"></polyline>
-                </svg>
-              </button>
             </div>
           </div>
         </article>
@@ -105,8 +99,17 @@ function renderArticles() {
 
   articlesContainer.innerHTML = articlesHtml;
 
-  // Setup click & keyboard interaction for expanding/collapsing
+  // Setup single-open accordion click & keyboard interaction
   const articleCards = articlesContainer.querySelectorAll(".article-card");
+
+  function closeAllArticlesExcept(targetCard) {
+    articleCards.forEach((c) => {
+      if (c !== targetCard && c.classList.contains("is-expanded")) {
+        collapseArticle(c);
+      }
+    });
+  }
+
   articleCards.forEach((card) => {
     card.addEventListener("click", (e) => {
       // If clicking "Zum Artikel" link, allow standard link behavior
@@ -114,18 +117,15 @@ function renderArticles() {
         return;
       }
 
-      // If clicking "Einklappen" button
-      if (e.target.closest(".js-article-collapse")) {
-        e.stopPropagation();
-        collapseArticle(card);
-        return;
-      }
-
-      // If card is collapsed, expand it
+      // If card is collapsed, close other open cards, expand this one, and smooth-scroll to prevent jumping
       if (card.classList.contains("is-collapsed")) {
+        closeAllArticlesExcept(card);
         expandArticle(card);
+        requestAnimationFrame(() => {
+          card.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        });
       } else {
-        // If clicking on the expanded card (outside links/buttons), collapse it
+        // If clicking on the already expanded card, collapse it
         collapseArticle(card);
       }
     });
@@ -136,7 +136,11 @@ function renderArticles() {
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
         if (card.classList.contains("is-collapsed")) {
+          closeAllArticlesExcept(card);
           expandArticle(card);
+          requestAnimationFrame(() => {
+            card.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          });
         } else {
           collapseArticle(card);
         }

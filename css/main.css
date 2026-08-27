@@ -68,6 +68,17 @@ body {
   transition: background-color 0.5s ease, border-color 0.5s ease;
 }
 
+.site-title-link {
+  text-decoration: none;
+  color: inherit;
+  display: inline-block;
+  transition: opacity 0.2s ease;
+}
+
+.site-title-link:hover {
+  opacity: 0.85;
+}
+
 .site-title {
   margin: 0;
   font-family: var(--font-serif);
@@ -108,11 +119,11 @@ body {
   transition: transform var(--transition-speed) ease;
 }
 
-/* Navigation Bar */
+/* Navigation Bar - 3 full-width tabs with maximum padding */
 .site-nav {
   background-color: var(--surface-color);
   border-bottom: 1px solid var(--border-color);
-  padding: 0.3rem 1.25rem;
+  padding: 0;
   transition: background-color 0.5s ease, border-color 0.5s ease;
 }
 
@@ -120,9 +131,10 @@ body {
   max-width: var(--max-width);
   margin: 0 auto;
   display: flex;
-  align-items: center;
-  justify-content: flex-start;
+  align-items: stretch;
+  justify-content: center;
   position: relative;
+  width: 100%;
 }
 
 .site-nav__hamburger {
@@ -147,22 +159,29 @@ body {
   list-style: none;
   margin: 0;
   padding: 0;
-  gap: 0.25rem;
+  width: 100%;
+  align-items: stretch;
 }
 
 .site-nav__item {
+  flex: 1;
+  display: flex;
   margin: 0;
 }
 
 .site-nav__link {
-  display: inline-block;
-  padding: 0.32rem 0.65rem;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.85rem 1rem;
   color: var(--text-muted);
   text-decoration: none;
   font-weight: 500;
-  font-size: 0.9rem;
-  border-radius: calc(var(--radius) - 2px);
+  font-size: 0.95rem;
+  border-bottom: 2px solid transparent;
   transition: all var(--transition-speed) ease;
+  text-align: center;
 }
 
 .site-nav__link:hover {
@@ -173,6 +192,7 @@ body {
 .site-nav__link.active {
   color: var(--nav-active-text);
   background-color: var(--nav-active-bg);
+  border-bottom-color: var(--primary-color);
   font-weight: 600;
 }
 
@@ -242,17 +262,51 @@ body {
   color: var(--text-color);
 }
 
-/* Featured Warm Hero Quote */
+/* Featured Warm Hero Quote with recognizable partner massage background fading out left-to-right */
 .hero-quote-card {
-  background: linear-gradient(135deg, var(--surface-color) 0%, var(--surface-hover) 100%);
+  position: relative;
+  background-color: var(--surface-color);
+  background-image: url("../images/pages/hero-partner-massage.jpg");
+  background-position: left center;
+  background-size: cover;
+  background-repeat: no-repeat;
   border: 1px solid var(--border-color);
   border-left: 5px solid var(--primary-color);
   border-radius: var(--radius);
-  padding: 2rem 2rem 1.75rem;
+  padding: 2.25rem 2.25rem 2rem;
   margin-bottom: 1.75rem;
-  box-shadow: 0 4px 18px rgba(194, 94, 46, 0.06);
-  position: relative;
+  box-shadow: 0 4px 18px rgba(194, 94, 46, 0.08);
   overflow: hidden;
+  min-height: 180px;
+  display: flex;
+  align-items: center;
+}
+
+/* Left-to-right fade gradient overlay ensuring clear visibility of massage on left and maximum text readability on right */
+.hero-quote-card__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.25) 0%,
+    rgba(255, 255, 255, 0.65) 25%,
+    rgba(255, 255, 255, 0.92) 50%,
+    rgba(255, 255, 255, 0.98) 100%
+  );
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px);
+  pointer-events: none;
+  z-index: 1;
+}
+
+[data-theme="dark"] .hero-quote-card__overlay {
+  background: linear-gradient(
+    90deg,
+    rgba(23, 19, 17, 0.35) 0%,
+    rgba(36, 29, 26, 0.75) 28%,
+    rgba(36, 29, 26, 0.94) 52%,
+    rgba(36, 29, 26, 0.98) 100%
+  );
 }
 
 .hero-quote-card::before {
@@ -266,10 +320,15 @@ body {
   color: var(--primary-color);
   opacity: 0.12;
   pointer-events: none;
+  z-index: 1;
 }
 
 .hero-quote {
+  position: relative;
+  z-index: 2;
   margin: 0;
+  max-width: 620px;
+  margin-left: auto;
 }
 
 .hero-quote__text {
@@ -280,6 +339,11 @@ body {
   color: var(--text-color);
   margin: 0;
   letter-spacing: 0.01em;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.7);
+}
+
+[data-theme="dark"] .hero-quote__text {
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
 }
 
 /* Welcome Feature Navigation Tiles (Side-by-Side with Overlay Text) */
@@ -713,50 +777,39 @@ body {
 .article-card.is-expanded .article-card__action {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  width: 100%;
   margin-top: auto;
-  align-self: flex-start;
 }
 
 /* Article Action Buttons */
 .article-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.45rem;
-  padding: 0.48rem 1rem;
+  padding: 0.65rem 1.25rem;
   background-color: var(--nav-active-bg);
   color: var(--primary-color);
   font-weight: 600;
-  font-size: 0.88rem;
+  font-size: 0.95rem;
   text-decoration: none;
   border-radius: 6px;
   border: 1px solid var(--border-color);
   cursor: pointer;
   font-family: inherit;
+  width: 100%;
   transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease, border-color var(--transition-speed) ease, transform 0.2s ease;
 }
 
 .article-btn svg {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   stroke: currentColor;
 }
 
 .article-btn--primary:hover {
   background-color: var(--primary-color);
   color: #ffffff;
-  border-color: var(--primary-color);
-}
-
-.article-btn--collapse {
-  background-color: transparent;
-  color: var(--text-muted);
-  border-color: var(--border-color);
-}
-
-.article-btn--collapse:hover {
-  background-color: var(--surface-hover);
-  color: var(--text-color);
   border-color: var(--primary-color);
 }
 

@@ -6,15 +6,17 @@
   <title>Massagen</title>
   
   <!-- Cache-busted stylesheets & scripts -->
-  <link rel="stylesheet" href="css/reset.css?v=20260827143858">
-  <link rel="stylesheet" href="css/main.css?v=20260827143858">
-  <script type="module" src="js/main.js?v=20260827143858"></script>
+  <link rel="stylesheet" href="css/reset.css?v=20260827152634">
+  <link rel="stylesheet" href="css/main.css?v=20260827152634">
+  <script type="module" src="js/main.js?v=20260827152634"></script>
 </head>
 <body>
   <!-- Top Bar -->
   <header class="top-bar">
     <div class="top-bar__brand">
-      <h1 class="site-title">Massagen</h1>
+      <a href="#info" class="site-title-link" data-nav-target="info">
+        <h1 class="site-title">Massagen</h1>
+      </a>
     </div>
     <div class="top-bar__actions">
       <button class="theme-toggle" type="button" data-theme-toggle aria-label="Theme wechseln" title="Theme wechseln">
@@ -35,7 +37,7 @@
       </button>
       <ul class="site-nav__list">
         <li class="site-nav__item">
-          <a href="#info" class="site-nav__link active" data-nav-target="info">Info</a>
+          <a href="#info" class="site-nav__link active" data-nav-target="info">Willkommen</a>
         </li>
         <li class="site-nav__item">
           <a href="#videos" class="site-nav__link" data-nav-target="videos">Videos</a>
@@ -49,19 +51,15 @@
 
   <!-- Main Content Views -->
   <main class="container">
-    <!-- Info View -->
-    <section id="view-info" class="page-view active" aria-labelledby="info-heading">
+    <!-- Info / Willkommen View -->
+    <section id="view-info" class="page-view active" aria-labelledby="welcome-heading">
+      <h2 id="welcome-heading" style="display: none;">Willkommen</h2>
       <div class="hero-quote-card">
+        <div class="hero-quote-card__overlay"></div>
         <blockquote class="hero-quote">
           <p class="hero-quote__text">„Es gibt kaum etwas Schöneres, als sich von dem liebsten Menschen auf der Welt ein paar Streicheleinheiten abzuholen. Und wenn dann noch die Technik stimmt, gelingt die Partnermassage garantiert.“</p>
         </blockquote>
       </div>
-
-      <article class="card">
-        <h2 id="info-heading">Info</h2>
-        <p>Entdecke die Kunst der achtsamen Partnermassage für tiefe Entspannung, Verbundenheit und ganzheitliches Wohlbefinden in deinem Zuhause.</p>
-        <p>Lerne sanfte Techniken, schaffe die perfekte Atmosphäre und genieße wohltuende Momente der Ruhe zu zweit.</p>
-      </article>
 
       <!-- Welcome Feature Navigation Tiles (Side-by-Side with Overlay Text) -->
       <div class="welcome-features">
@@ -73,13 +71,6 @@
               <span class="feature-tile__badge">Demnächst</span>
               <h3 class="feature-tile__title">Video-Anleitungen</h3>
               <p class="feature-tile__description">Praktische Massage-Griffe und stimmungsvolle Video-Workshops für zu Hause.</p>
-              <div class="feature-tile__action">
-                <span>Zu den Videos</span>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M5 12h14"></path>
-                  <path d="m12 5 7 7-7 7"></path>
-                </svg>
-              </div>
             </div>
           </div>
         </a>
@@ -92,13 +83,6 @@
               <span class="feature-tile__badge">Ratgeber</span>
               <h3 class="feature-tile__title">Artikel & Tipps</h3>
               <p class="feature-tile__description">Ausgewählte Anleitungen, Vorbereitung und achtsame Techniken für zu Hause.</p>
-              <div class="feature-tile__action">
-                <span>Zu den Artikeln</span>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M5 12h14"></path>
-                  <path d="m12 5 7 7-7 7"></path>
-                </svg>
-              </div>
             </div>
           </div>
         </a>

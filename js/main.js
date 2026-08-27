@@ -1,8 +1,10 @@
+import { config } from "./config.js";
 import { seeAlsoLinks } from "./data/see-also-links.js";
 
 function initApp() {
   initThemeToggle();
   initNavigation();
+  initFooter();
   initSeeAlsoLinks();
 }
 
@@ -10,6 +12,21 @@ if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", initApp);
 } else {
   initApp();
+}
+
+/* Footer visibility based on config */
+function initFooter() {
+  const footer = document.querySelector("footer.bottom-bar");
+  const container = document.querySelector(".container");
+
+  if (!config.showFooter) {
+    if (footer) {
+      footer.style.display = "none";
+    }
+    if (container) {
+      container.classList.add("no-footer");
+    }
+  }
 }
 
 /* Theme Switcher with sleek SVG icons */
@@ -154,6 +171,38 @@ function initNavigation() {
   }
 }
 
+/**
+ * Format link display text according to length and slash segments rule:
+ * - Strip protocol & www
+ * - If length <= 30 chars, show full clean URL
+ * - If > 30 chars, drop domain and take rightmost whole slash segments <= 30 chars without mid-word cutting
+ */
+function formatLinkDisplayText(url) {
+  const cleanUrl = url
+    .replace(/^https?:\/\//i, "")
+    .replace(/^www\./i, "")
+    .replace(/\/+$/, "");
+
+  if (cleanUrl.length <= 30) {
+    return cleanUrl;
+  }
+
+  const segments = cleanUrl.split("/");
+  const pathSegments = segments.length > 1 ? segments.slice(1) : segments;
+
+  const chosenSegments = [];
+  for (let i = pathSegments.length - 1; i >= 0; i--) {
+    const candidate = [pathSegments[i], ...chosenSegments].join("/");
+    if (candidate.length <= 30 || chosenSegments.length === 0) {
+      chosenSegments.unshift(pathSegments[i]);
+    } else {
+      break;
+    }
+  }
+
+  return chosenSegments.join("/");
+}
+
 /* Format & Render See Also Links */
 function initSeeAlsoLinks() {
   const container = document.getElementById("see-also-container");
@@ -169,11 +218,7 @@ function initSeeAlsoLinks() {
   seeAlsoLinks.forEach((item) => {
     if (!item.url || !item.title) return;
 
-    // Smartly reduce URL (strip protocol, www, and trailing slash)
-    const cleanUrl = item.url
-      .replace(/^https?:\/\//i, "")
-      .replace(/^www\./i, "")
-      .replace(/\/+$/, "");
+    const displayText = formatLinkDisplayText(item.url);
 
     const linkItem = document.createElement("div");
     linkItem.className = "link-item";
@@ -183,21 +228,15 @@ function initSeeAlsoLinks() {
     anchor.href = item.url;
     anchor.target = "_blank";
     anchor.rel = "noopener noreferrer";
-    anchor.textContent = cleanUrl;
-
-    const separator = document.createElement("span");
-    separator.className = "link-item__separator";
-    separator.textContent = "-";
+    anchor.textContent = displayText;
 
     const titleSpan = document.createElement("span");
     titleSpan.className = "link-item__title";
     titleSpan.textContent = item.title;
 
     linkItem.appendChild(anchor);
-    linkItem.appendChild(separator);
     linkItem.appendChild(titleSpan);
 
     container.appendChild(linkItem);
   });
 }
-

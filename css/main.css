@@ -176,6 +176,10 @@ body {
   flex: 1;
 }
 
+.container.no-footer {
+  padding-bottom: 1.5rem;
+}
+
 /* Fast, smooth view switching */
 .page-view {
   display: none;
@@ -252,21 +256,21 @@ body {
 .link-list {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 1rem;
   margin-top: 0.75rem;
 }
 
 .link-item {
   display: flex;
-  align-items: baseline;
-  line-height: 1.5;
+  flex-direction: column;
+  gap: 0.2rem;
+  line-height: 1.4;
   font-size: 0.95rem;
-  color: var(--text-color);
 }
 
 .link-item__anchor {
   color: var(--primary-color);
-  font-weight: 500;
+  font-weight: 600;
   text-decoration: none;
   word-break: break-all;
   transition: color var(--transition-speed) ease, text-decoration var(--transition-speed) ease;
@@ -278,14 +282,9 @@ body {
   text-underline-offset: 2px;
 }
 
-.link-item__separator {
-  margin: 0 0.5rem;
-  color: var(--text-muted);
-  user-select: none;
-}
-
 .link-item__title {
   color: var(--text-muted);
+  font-size: 0.9rem;
 }
 
 /* Quality check utilities */

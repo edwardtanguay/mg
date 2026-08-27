@@ -4,6 +4,7 @@
   "type": "module",
   "description": "Static website template with data parsing and automated deployment",
   "scripts": {
+    "dev": "tsx cmd/dev.ts",
     "pd": "tsx cmd/parse-data.ts",
     "deploy": "npm run pd && tsx cmd/deploy.ts"
   },

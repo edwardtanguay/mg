@@ -11,6 +11,12 @@ The project must remain simple, modular, and easy to maintain:
 - JavaScript handles behavior, interactivity, and dynamic DOM updates.
 - Do not introduce frameworks, bundlers, package managers, or dependencies unless explicitly requested.
 
+## Style and Design of site
+
+- the emotions evoked by this site should be warmth, comfort, pleasure, relaxation
+- use light animations if necessary, but slow moving
+- if necessary, remove the light/dark so that it gives a single warm look
+
 ## Human language
 
 - the language of this site is GERMAN

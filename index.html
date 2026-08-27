@@ -38,6 +38,9 @@
           <a href="#welcome" class="site-nav__link active" data-nav-target="welcome">Willkommen</a>
         </li>
         <li class="site-nav__item">
+          <a href="#articles" class="site-nav__link" data-nav-target="articles">Artikel</a>
+        </li>
+        <li class="site-nav__item">
           <a href="#about" class="site-nav__link" data-nav-target="about">Über die Website</a>
         </li>
       </ul>
@@ -48,10 +51,26 @@
   <main class="container">
     <!-- Welcome View -->
     <section id="view-welcome" class="page-view active" aria-labelledby="welcome-heading">
+      <div class="hero-quote-card">
+        <blockquote class="hero-quote">
+          <p class="hero-quote__text">„Keine Frage: Es gibt kaum etwas Schöneres, als sich von dem liebsten Menschen auf der Welt ein paar Streicheleinheiten abzuholen. Und wenn dann noch die Technik stimmt, gelingt die Partnermassage garantiert.“</p>
+        </blockquote>
+      </div>
+
       <article class="card">
         <h2 id="welcome-heading">Willkommen</h2>
-        <p>In Kürze verfügbar...</p>
+        <p>Entdecke die Kunst der achtsamen Partnermassage für tiefe Entspannung, Verbundenheit und ganzheitliches Wohlbefinden in deinem Zuhause.</p>
+        <p>Lerne sanfte Techniken, schaffe die perfekte Atmosphäre und genieße wohltuende Momente der Ruhe zu zweit.</p>
       </article>
+    </section>
+
+    <!-- Articles View -->
+    <section id="view-articles" class="page-view" aria-labelledby="articles-heading">
+      <h2 id="articles-heading" style="display: none;">Artikel</h2>
+      <p class="articles-intro">Ausgewählte Ratgeber und Anleitungen für die perfekte Massage zu Hause:</p>
+      <div class="articles-grid" id="articles-container">
+        <!-- Rendered dynamically by js/main.js -->
+      </div>
     </section>
 
     <!-- About View -->

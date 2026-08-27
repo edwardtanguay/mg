@@ -1,9 +1,11 @@
 import { config } from "./config.js";
+import { articles } from "./data/articles.js";
 
 function initApp() {
   initThemeToggle();
   initNavigation();
   initFooter();
+  renderArticles();
 }
 
 if (document.readyState === "loading") {
@@ -11,6 +13,55 @@ if (document.readyState === "loading") {
 } else {
   initApp();
 }
+
+/* Render articles dynamically */
+function renderArticles() {
+  const articlesContainer = document.getElementById("articles-container");
+  if (!articlesContainer) return;
+
+  if (!Array.isArray(articles) || articles.length === 0) {
+    articlesContainer.innerHTML = "<p>Keine Artikel verfügbar.</p>";
+    return;
+  }
+
+  const articlesHtml = articles
+    .map((item) => {
+      const escapedTitle = escapeHtml(item.title);
+      const escapedSummary = escapeHtml(item.summary);
+      const escapedUrl = encodeURI(item.url);
+
+      return `
+        <article class="article-card">
+          <h3 class="article-card__title">${escapedTitle}</h3>
+          <p class="article-card__summary">${escapedSummary}</p>
+          <div class="article-card__action">
+            <a href="${escapedUrl}" class="article-btn" target="_blank" rel="noopener noreferrer">
+              <span>Zum Artikel</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
+            </a>
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+
+  articlesContainer.innerHTML = articlesHtml;
+}
+
+function escapeHtml(str) {
+  if (!str) return "";
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 
 /* Footer visibility based on config */
 function initFooter() {

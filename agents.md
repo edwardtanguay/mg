@@ -11,6 +11,11 @@ The project must remain simple, modular, and easy to maintain:
 - JavaScript handles behavior, interactivity, and dynamic DOM updates.
 - Do not introduce frameworks, bundlers, package managers, or dependencies unless explicitly requested.
 
+## Human language
+
+- the language of this site is GERMAN
+- if asked to add any text or wording or corrects, always translate to German first
+
 ## Directory Structure
 
 The starter template includes minimal starter files:

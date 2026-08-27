@@ -14,7 +14,40 @@ if (document.readyState === "loading") {
   initApp();
 }
 
-/* Render articles dynamically */
+/**
+ * Format relative date in German based on timestamp string (e.g. "2026-08-27 16:00:25")
+ */
+function formatRelativeDate(dateStr) {
+  if (!dateStr) return "";
+  const cleanedStr = dateStr.replace(" ", "T");
+  const articleDate = new Date(cleanedStr);
+  if (isNaN(articleDate.getTime())) return "";
+
+  const now = new Date();
+
+  // Reset hours to compare calendar days
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const artDay = new Date(articleDate.getFullYear(), articleDate.getMonth(), articleDate.getDate());
+
+  const diffMs = today.getTime() - artDay.getTime();
+  const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffDays <= 0) {
+    return "heute hinzugefügt";
+  } else if (diffDays === 1) {
+    return "gestern hinzugefügt";
+  } else if (diffDays < 30) {
+    return `vor ${diffDays} Tagen hinzugefügt`;
+  } else if (diffDays < 365) {
+    const months = Math.floor(diffDays / 30);
+    return months === 1 ? "vor 1 Monat hinzugefügt" : `vor ${months} Monaten hinzugefügt`;
+  } else {
+    const years = Math.floor(diffDays / 365);
+    return years === 1 ? "vor 1 Jahr hinzugefügt" : `vor ${years} Jahren hinzugefügt`;
+  }
+}
+
+/* Render articles dynamically with collapsed and expanded states */
 function renderArticles() {
   const articlesContainer = document.getElementById("articles-container");
   if (!articlesContainer) return;
@@ -25,23 +58,31 @@ function renderArticles() {
   }
 
   const articlesHtml = articles
-    .map((item) => {
+    .map((item, index) => {
       const escapedId = escapeHtml(item.id || "");
       const escapedTitle = escapeHtml(item.title);
       const escapedSummary = escapeHtml(item.summary);
       const escapedUrl = encodeURI(item.url);
       const imageSrc = `images/articles/${escapedId}.jpg`;
+      const relativeDate = formatRelativeDate(item.whenAdded);
+      const supertitleHtml = relativeDate
+        ? `<span class="article-card__supertitle">${escapeHtml(relativeDate)}</span>`
+        : "";
 
       return `
-        <article class="article-card">
+        <article class="article-card is-collapsed" data-article-index="${index}" tabindex="0" role="button" aria-expanded="false">
           <div class="article-card__media">
             <img src="${imageSrc}" alt="${escapedTitle}" class="article-card__img" loading="lazy" onerror="this.parentElement.style.display='none'">
           </div>
           <div class="article-card__body">
+            ${supertitleHtml}
             <h3 class="article-card__title">${escapedTitle}</h3>
-            <p class="article-card__summary">${escapedSummary}</p>
+            <p class="article-card__summary">
+              <span class="article-card__summary-prefix">Summary:</span>
+              <span class="article-card__summary-text">${escapedSummary}</span>
+            </p>
             <div class="article-card__action">
-              <a href="${escapedUrl}" class="article-btn" target="_blank" rel="noopener noreferrer">
+              <a href="${escapedUrl}" class="article-btn article-btn--primary" target="_blank" rel="noopener noreferrer">
                 <span>Zum Artikel</span>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
@@ -49,6 +90,12 @@ function renderArticles() {
                   <line x1="10" y1="14" x2="21" y2="3"></line>
                 </svg>
               </a>
+              <button type="button" class="article-btn article-btn--collapse js-article-collapse" aria-label="Artikel einklappen">
+                <span>Einklappen</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="18 15 12 9 6 15"></polyline>
+                </svg>
+              </button>
             </div>
           </div>
         </article>
@@ -57,6 +104,57 @@ function renderArticles() {
     .join("");
 
   articlesContainer.innerHTML = articlesHtml;
+
+  // Setup click & keyboard interaction for expanding/collapsing
+  const articleCards = articlesContainer.querySelectorAll(".article-card");
+  articleCards.forEach((card) => {
+    card.addEventListener("click", (e) => {
+      // If clicking "Zum Artikel" link, allow standard link behavior
+      if (e.target.closest("a.article-btn")) {
+        return;
+      }
+
+      // If clicking "Einklappen" button
+      if (e.target.closest(".js-article-collapse")) {
+        e.stopPropagation();
+        collapseArticle(card);
+        return;
+      }
+
+      // If card is collapsed, expand it
+      if (card.classList.contains("is-collapsed")) {
+        expandArticle(card);
+      } else {
+        // If clicking on the expanded card (outside links/buttons), collapse it
+        collapseArticle(card);
+      }
+    });
+
+    // Keyboard support (Enter/Space to toggle when focused on card)
+    card.addEventListener("keydown", (e) => {
+      if (e.target !== card) return;
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        if (card.classList.contains("is-collapsed")) {
+          expandArticle(card);
+        } else {
+          collapseArticle(card);
+        }
+      }
+    });
+  });
+}
+
+function expandArticle(card) {
+  card.classList.remove("is-collapsed");
+  card.classList.add("is-expanded");
+  card.setAttribute("aria-expanded", "true");
+}
+
+function collapseArticle(card) {
+  card.classList.remove("is-expanded");
+  card.classList.add("is-collapsed");
+  card.setAttribute("aria-expanded", "false");
 }
 
 function escapeHtml(str) {
@@ -68,7 +166,6 @@ function escapeHtml(str) {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
 }
-
 
 /* Footer visibility based on config */
 function initFooter() {
@@ -85,9 +182,20 @@ function initFooter() {
   }
 }
 
-/* Theme Switcher with sleek SVG icons */
+/* Theme Switcher with sleek SVG icons and showLightDark config */
 function initThemeToggle() {
   const themeToggleBtn = document.querySelector("[data-theme-toggle]");
+  const isToggleVisible = config.showLightDark === true || config.showLightDark === "true";
+
+  if (!isToggleVisible) {
+    // When showLightDark is false, default to dark theme and hide the button
+    document.documentElement.setAttribute("data-theme", "dark");
+    if (themeToggleBtn) {
+      themeToggleBtn.style.display = "none";
+    }
+    return;
+  }
+
   if (!themeToggleBtn) return;
 
   const moonIconSvg = `
@@ -138,33 +246,25 @@ function initThemeToggle() {
   });
 }
 
-/* Page Navigation & Dynamic Hamburger Logic */
+/* Page Navigation */
 function initNavigation() {
-  const navContainer = document.querySelector(".site-nav__container");
   const hamburgerBtn = document.querySelector(".site-nav__hamburger");
   const navList = document.querySelector(".site-nav__list");
   const navLinks = document.querySelectorAll("[data-nav-target]");
   const pageViews = document.querySelectorAll(".page-view");
 
-  // Conditional hamburger display: only show hamburger if there are 4 or more nav items
-  const navItemsCount = navLinks.length;
-  if (navItemsCount >= 4 && navContainer && hamburgerBtn) {
-    navContainer.classList.add("has-hamburger");
-    hamburgerBtn.style.display = "inline-flex";
-  } else if (hamburgerBtn) {
+  // Keep hamburger hidden as requested
+  if (hamburgerBtn) {
     hamburgerBtn.style.display = "none";
-  }
-
-  if (hamburgerBtn && navList) {
-    hamburgerBtn.addEventListener("click", () => {
-      const isExpanded = hamburgerBtn.getAttribute("aria-expanded") === "true";
-      hamburgerBtn.setAttribute("aria-expanded", !isExpanded);
-      navList.classList.toggle("open");
-    });
   }
 
   // Smooth, fast view switching
   function switchView(targetId) {
+    // Map welcome alias to info
+    if (targetId === "welcome") {
+      targetId = "info";
+    }
+
     const targetSection = document.getElementById(`view-${targetId}`);
     if (!targetSection) return;
 
@@ -187,7 +287,6 @@ function initNavigation() {
     pageViews.forEach((view) => {
       if (view === targetSection) {
         view.classList.add("active");
-        // Force reflow for smooth animation trigger
         requestAnimationFrame(() => {
           view.classList.add("visible");
         });
@@ -213,24 +312,28 @@ function initNavigation() {
     const targetElement = e.target.closest("[data-nav-target]");
     if (targetElement) {
       const targetId = targetElement.getAttribute("data-nav-target");
-      if (targetId && document.getElementById(`view-${targetId}`)) {
+      const mappedTargetId = targetId === "welcome" ? "info" : targetId;
+      if (mappedTargetId && document.getElementById(`view-${mappedTargetId}`)) {
         e.preventDefault();
-        switchView(targetId);
-        history.pushState(null, "", `#${targetId}`);
+        switchView(mappedTargetId);
+        history.pushState(null, "", `#${mappedTargetId}`);
       }
     }
   });
 
   // Handle browser back/forward and initial hash load
   window.addEventListener("popstate", () => {
-    const currentHash = window.location.hash.replace("#", "") || "welcome";
+    let currentHash = window.location.hash.replace("#", "") || "info";
+    if (currentHash === "welcome") currentHash = "info";
     if (document.getElementById(`view-${currentHash}`)) {
       switchView(currentHash);
     }
   });
 
-  const initialHash = window.location.hash.replace("#", "");
+  let initialHash = window.location.hash.replace("#", "");
+  if (initialHash === "welcome") initialHash = "info";
   if (initialHash && document.getElementById(`view-${initialHash}`)) {
     switchView(initialHash);
   }
 }
+

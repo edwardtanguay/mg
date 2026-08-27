@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 export interface ArticleItem {
+  whenAdded: string;
   id: string;
   url: string;
   title: string;
@@ -30,31 +31,36 @@ export function parseArticles(): void {
     }
 
     const parts = trimmedLine.split(";");
-    if (parts.length >= 4) {
-      // Format: timestamp; id; url; title; summary (optional timestamp at index 0)
-      let id = "";
-      let url = "";
-      let title = "";
-      let summary = "";
-
-      if (parts.length >= 5) {
-        // Timestamp is parts[0]
-        id = parts[1].trim();
-        url = parts[2].trim();
-        title = parts[3].trim();
-        summary = parts.slice(4).join(";").trim();
-      } else {
-        id = parts[0].trim();
-        url = parts[1].trim();
-        title = parts[2].trim();
-        summary = parts.slice(3).join(";").trim();
-      }
+    if (parts.length >= 5) {
+      // Format: whenAdded; id; url; title; summary
+      const whenAdded = parts[0].trim();
+      const id = parts[1].trim();
+      const url = parts[2].trim();
+      const title = parts[3].trim();
+      const summary = parts.slice(4).join(";").trim();
 
       if (id && url && title) {
-        articles.push({ id, url, title, summary });
+        articles.push({ whenAdded, id, url, title, summary });
+      }
+    } else if (parts.length === 4) {
+      // Fallback format without whenAdded
+      const id = parts[0].trim();
+      const url = parts[1].trim();
+      const title = parts[2].trim();
+      const summary = parts.slice(3).join(";").trim();
+
+      if (id && url && title) {
+        articles.push({ whenAdded: "", id, url, title, summary });
       }
     }
   }
+
+  // Sort articles newest to oldest by whenAdded timestamp
+  articles.sort((a, b) => {
+    if (!a.whenAdded) return 1;
+    if (!b.whenAdded) return -1;
+    return b.whenAdded.localeCompare(a.whenAdded);
+  });
 
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });

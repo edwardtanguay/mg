@@ -1,8 +1,16 @@
-// Main JavaScript for Info Site
-document.addEventListener("DOMContentLoaded", () => {
+import { seeAlsoLinks } from "./data/see-also-links.js";
+
+function initApp() {
   initThemeToggle();
   initNavigation();
-});
+  initSeeAlsoLinks();
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initApp);
+} else {
+  initApp();
+}
 
 /* Theme Switcher with sleek SVG icons */
 function initThemeToggle() {
@@ -144,5 +152,52 @@ function initNavigation() {
   if (initialHash && document.getElementById(`view-${initialHash}`)) {
     switchView(initialHash);
   }
+}
+
+/* Format & Render See Also Links */
+function initSeeAlsoLinks() {
+  const container = document.getElementById("see-also-container");
+  if (!container) return;
+
+  if (!Array.isArray(seeAlsoLinks) || seeAlsoLinks.length === 0) {
+    container.innerHTML = "<p class='text-muted'>No links available.</p>";
+    return;
+  }
+
+  container.innerHTML = "";
+
+  seeAlsoLinks.forEach((item) => {
+    if (!item.url || !item.title) return;
+
+    // Smartly reduce URL (strip protocol, www, and trailing slash)
+    const cleanUrl = item.url
+      .replace(/^https?:\/\//i, "")
+      .replace(/^www\./i, "")
+      .replace(/\/+$/, "");
+
+    const linkItem = document.createElement("div");
+    linkItem.className = "link-item";
+
+    const anchor = document.createElement("a");
+    anchor.className = "link-item__anchor";
+    anchor.href = item.url;
+    anchor.target = "_blank";
+    anchor.rel = "noopener noreferrer";
+    anchor.textContent = cleanUrl;
+
+    const separator = document.createElement("span");
+    separator.className = "link-item__separator";
+    separator.textContent = "-";
+
+    const titleSpan = document.createElement("span");
+    titleSpan.className = "link-item__title";
+    titleSpan.textContent = item.title;
+
+    linkItem.appendChild(anchor);
+    linkItem.appendChild(separator);
+    linkItem.appendChild(titleSpan);
+
+    container.appendChild(linkItem);
+  });
 }
 

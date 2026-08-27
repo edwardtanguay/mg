@@ -80,18 +80,39 @@ Every site derived from this template should adhere to these baseline features:
 - **Non-breaking Text**: Keep numeric amounts and currency symbols or unit spaces together (e.g., `1.99&nbsp;€` or `.nowrap`) so they don't wrap onto separate lines.
 - **Top-Aligned Checkboxes**: In checklist items, ensure checkbox inputs are top-aligned with multiline label text (`align-items: flex-start`), not centered in the middle of the text block.
 
-## Automated Deployment & Updates ("ftp" trigger)
+## Data Parsing & Content Architecture
 
-When the developer types **`ftp`** in the chatbot, the AI assistant must automatically execute the full deployment pipeline:
+A core design pattern of this template is enabling developers to store content in flat, readable text files within `/data/` and compile them into static JavaScript modules in `/js/data/` for dynamic client-side rendering.
 
-1. **Pre-deployment Tasks**:
-   - Run any data parsing, verification scripts, or checks required by the app (add future build/parse tasks here).
+### Workflow & Conventions:
+
+1. **Source Data Files (`/data/*.txt`)**:
+   - Add plaintext or delimited files in `/data/` (e.g. `/data/see-also-links.dpod.txt`).
+   - Format records with clear separators (e.g. `url; title` or `key: value`).
+
+2. **Parser Modules (`/cmd/parse-data/*.ts`)**:
+   - Create a dedicated parsing function in `/cmd/parse-data/parse-[feature].ts` (e.g. `parseSeeAlsoLinks()`).
+   - The parser reads the text file, converts entries into structured JavaScript objects or arrays, and writes an ES module output to `/js/data/[feature].js` (e.g. `export const seeAlsoLinks = [...];`).
+
+3. **Orchestration (`npm run pd`)**:
+   - `/cmd/parse-data.ts` acts as the master runner that imports and executes each individual parse function.
+   - Run `npm run pd` to re-generate all `/js/data/` modules at any time.
+
+4. **Frontend Consumption (`/js/main.js`)**:
+   - Frontend scripts import the data modules directly (`import { seeAlsoLinks } from "./data/see-also-links.js";`).
+   - Elements are rendered cleanly and securely at runtime via standard DOM APIs.
+
+## Automated Deployment & Updates ("npm run deploy" / "ftp" trigger)
+
+When the developer runs **`npm run deploy`** or types **`ftp`** in the chatbot, the pipeline automatically executes:
+
+1. **Pre-deployment Tasks (`npm run pd`)**:
+   - Runs `/cmd/parse-data.ts` to ensure all static JavaScript data files in `/js/data/` are up to date.
 2. **Cache Busting**:
-   - Increment/update the cache-busting query parameter across modified asset links in `index.html` (e.g., `href="css/main.css?v=1.0.1"`, `src="js/main.js?v=1.0.1"`).
+   - `/cmd/deploy.ts` increments/updates cache-busting timestamp parameters (`?v=YYYYMMDDHHMMSS`) on all stylesheet and script references in `index.html`.
 3. **FTP Upload**:
-   - Read FTP credentials from `.env` (`FTP_SERVER`, `FTP_USER`, `FTP_PASSWORD`, `FTP_DIRECTORY`).
-   - Upload project files to `public_html/<app-name>` on `FTP_SERVER`.
-   - On first upload, create destination directory; on subsequent uploads, update changed files.
+   - Reads FTP credentials from `.env` (`FTP_SERVER`, `FTP_USER`, `FTP_PASSWORD`, `FTP_DIRECTORY`).
+   - Uses `basic-ftp` to upload changed project files (`index.html`, `css/`, `js/`, `data/`, `assets/`) to the destination server.
 
 ## HTML Rules
 

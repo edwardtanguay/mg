@@ -1,0 +1,17 @@
+{
+  "name": "mg",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Static website template with data parsing and automated deployment",
+  "scripts": {
+    "pd": "tsx cmd/parse-data.ts",
+    "deploy": "npm run pd && tsx cmd/deploy.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.5",
+    "basic-ftp": "^5.0.5",
+    "dotenv": "^16.4.7",
+    "tsx": "^4.19.3",
+    "typescript": "^5.7.3"
+  }
+}

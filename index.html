@@ -6,10 +6,9 @@
   <title>Info Site</title>
   
   <!-- Cache-busted stylesheets & scripts -->
-  <link rel="stylesheet" href="css/reset.css?v=1.0.1">
-  <link rel="stylesheet" href="css/main.css?v=1.0.1">
-  
-  <script src="js/main.js?v=1.0.1" defer></script>
+  <link rel="stylesheet" href="css/reset.css?v=20260827103243">
+  <link rel="stylesheet" href="css/main.css?v=20260827103243">
+  <script type="module" src="js/main.js?v=20260827103243"></script>
 </head>
 <body>
   <!-- Top Bar -->
@@ -91,6 +90,13 @@
           <li><strong>Modern CSS</strong> featuring custom properties, flexbox, grid, and dark mode theming.</li>
           <li><strong>Vanilla JavaScript</strong> for fast, dependency-free interactive logic.</li>
         </ul>
+      </article>
+
+      <article class="card">
+        <h3>See also</h3>
+        <div id="see-also-container" class="link-list" aria-live="polite">
+          <!-- Populated dynamically by js/main.js from js/data/see-also-links.js -->
+        </div>
       </article>
 
       <article class="card">

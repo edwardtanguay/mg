@@ -51,9 +51,6 @@ FTP_DIRECTORY = /public_html
 ### Setup
 
 1. Copy `.env.example` to `.env`:
-   ```bash
-   cp .env.example .env
-   ```
 2. Fill in your actual FTP credentials in `.env` (note: `.env` is ignored by `.gitignore` and should never be committed to source control).
 
 ### Deployment Workflow

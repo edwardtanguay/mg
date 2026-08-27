@@ -42,9 +42,9 @@ When a project grows, files can be expanded into modular parts as needed (the fo
 This project includes a `.env.example` file documenting the configuration needed for FTP deployment:
 
 ```env
-FTP_SERVER = ftp.example.com
-FTP_USER = username@example.com
-FTP_PASSWORD = your-secure-password
+FTP_SERVER = ftp.tanguay.info
+FTP_USER = edward@tanguay.info
+FTP_PASSWORD = TODO
 FTP_DIRECTORY = /public_html
 ```
 

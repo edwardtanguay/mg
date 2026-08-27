@@ -61,27 +61,37 @@ Only add files when they have a clear responsibility. Avoid creating duplicate, 
 Every site derived from this template should adhere to these baseline features:
 
 1. **Responsive Design**: Must be fully responsive for mobile and desktop screens.
-2. **Top Header Link**: Always include a small link at the top of the app:
+2. **Top Header & Site Navigation**:
+   - Top header contains site title on the left and icon-only theme toggle on the right.
+   - Navigation links are placed immediately below the top header.
+   - For mobile screens, navigation remains inline/compact for $\le 3$ pages; an accessible hamburger menu is displayed when there are $4$ or more pages.
+3. **Light/Dark Theme Switch**: Always provide a light/dark switch with saved preference (e.g. via `localStorage` and `data-theme` attribute) using sleek solid SVG icons without text labels.
+4. **Fixed Bottom Footer Link**: Always include a fixed bottom footer linking to portfolio that remains in place while middle content scrolls:
    ```html
-   (see more projects by <a href="https://tanguay.info" target="_blank" rel="noopener noreferrer">Edward</a>)
+   <footer class="bottom-bar">
+     <span class="bottom-bar__link">
+       (see more projects by <a href="https://tanguay.info" target="_blank" rel="noopener noreferrer">Edward</a>)
+     </span>
+   </footer>
    ```
-3. **Light/Dark Theme Switch**: Always provide a light/dark switch with saved preference (e.g. via `localStorage` and `data-theme` attribute).
 
 ## Quality Checks
 
 - **Non-breaking Text**: Keep numeric amounts and currency symbols or unit spaces together (e.g., `1.99&nbsp;€` or `.nowrap`) so they don't wrap onto separate lines.
 - **Top-Aligned Checkboxes**: In checklist items, ensure checkbox inputs are top-aligned with multiline label text (`align-items: flex-start`), not centered in the middle of the text block.
 
-## Deployment & Updates (FTP Workflow)
+## Automated Deployment & Updates ("ftp" trigger)
 
-When creating or updating an app:
+When the developer types **`ftp`** in the chatbot, the AI assistant must automatically execute the full deployment pipeline:
 
-1. **Cache Busting**: Append or increment a cache-busting query parameter to CSS links (e.g., `href="css/main.css?v=1.0.1"`) so browsers always reload updated styles.
-2. **FTP Upload**:
-   - Connection credentials are kept locally in `.env` (refer to `.env.example`).
-   - For an app (e.g., `frenchnouns`), upload to `public_html/<app-name>` on the `FTP_SERVER`.
-   - **First Upload**: Create the directory in `public_html/` and upload all files.
-   - **Subsequent Updates**: Only upload changed files.
+1. **Pre-deployment Tasks**:
+   - Run any data parsing, verification scripts, or checks required by the app (add future build/parse tasks here).
+2. **Cache Busting**:
+   - Increment/update the cache-busting query parameter across modified asset links in `index.html` (e.g., `href="css/main.css?v=1.0.1"`, `src="js/main.js?v=1.0.1"`).
+3. **FTP Upload**:
+   - Read FTP credentials from `.env` (`FTP_SERVER`, `FTP_USER`, `FTP_PASSWORD`, `FTP_DIRECTORY`).
+   - Upload project files to `public_html/<app-name>` on `FTP_SERVER`.
+   - On first upload, create destination directory; on subsequent uploads, update changed files.
 
 ## HTML Rules
 
@@ -104,4 +114,5 @@ When creating or updating an app:
 - Use modern vanilla JavaScript (`const`, `let`, never `var`).
 - Check that queried DOM elements exist before attaching listeners or mutating them.
 - Avoid global variable pollution.
-- Do not inject untrusted content with `innerHTML`; use `textContent`.
+- Do not inject untrusted content with `innerHTML`; use `textContent` where applicable.
+

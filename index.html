@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>App Template</title>
+  <title>Info Site</title>
   
   <!-- Cache-busted stylesheets -->
   <link rel="stylesheet" href="css/reset.css?v=1.0.0">
@@ -14,20 +14,97 @@
 <body>
   <!-- Top Bar -->
   <header class="top-bar">
-    <span class="top-bar__link">
-      (see more projects by <a href="https://tanguay.info" target="_blank" rel="noopener noreferrer">Edward</a>)
-    </span>
-    <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle theme">
-      🌙 Dark Mode
-    </button>
+    <div class="top-bar__brand">
+      <h1 class="site-title">Info Site</h1>
+    </div>
+    <div class="top-bar__actions">
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch theme" title="Switch theme">
+        <!-- SVG icon injected by JS -->
+      </button>
+    </div>
   </header>
 
-  <!-- Main Content -->
+  <!-- Navigation Bar -->
+  <nav class="site-nav" aria-label="Main Navigation">
+    <div class="site-nav__container">
+      <button class="site-nav__hamburger" type="button" aria-label="Toggle navigation menu" aria-expanded="false" style="display: none;">
+        <svg class="hamburger-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+      <ul class="site-nav__list">
+        <li class="site-nav__item">
+          <a href="#welcome" class="site-nav__link active" data-nav-target="welcome">Welcome</a>
+        </li>
+        <li class="site-nav__item">
+          <a href="#about" class="site-nav__link" data-nav-target="about">About</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Main Content Views -->
   <main class="container">
-    <article class="card">
-      <h1>App Template</h1>
-      <p>This is a starter template for static HTML, CSS, and JavaScript websites.</p>
-    </article>
+    <!-- Welcome View -->
+    <section id="view-welcome" class="page-view active" aria-labelledby="welcome-heading">
+      <article class="card">
+        <h2 id="welcome-heading">Welcome</h2>
+        <p>This is a starter template for static HTML, CSS, and JavaScript websites.</p>
+        <p>It provides clean foundational styling, built-in light/dark theme switching, and modular structure without requiring any build steps or frameworks.</p>
+      </article>
+
+      <article class="card">
+        <h3>Core Principles</h3>
+        <p>The architecture emphasizes semantic HTML, responsive CSS with modern custom properties, and progressive enhancement through vanilla JavaScript.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+      </article>
+
+      <article class="card">
+        <h3>Design & Layout Details</h3>
+        <p>Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris.</p>
+        <p>Integer in mauris eu nibh euismod gravida. Duis ac tellus et risus vulputate vehicula. Donec lobortis risus a elit. Etiam tempor. Ut ullamcorper, ligula eu tempor congue, eros est euismod turpis, id tincidunt sapien risus a quam.</p>
+        <p>Maecenas fermentum consequat mi. Donec fermentum. Pellentesque malesuada nulla a mi. Duis sapien sem, aliquet nec, commodo eget, consequat quis, neque. Aliquam faucibus, elit ut dictum aliquet, felis nisl adipiscing sapien, sed malesuada diam lacus eget erat.</p>
+      </article>
+
+      <article class="card">
+        <h3>Testing Vertical Scroll</h3>
+        <p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.</p>
+        <p>Aenean nec lorem. In porttitor. Donec laoreet nonummy augue. Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.</p>
+      </article>
+    </section>
+
+    <!-- About View -->
+    <section id="view-about" class="page-view" aria-labelledby="about-heading">
+      <article class="card">
+        <h2 id="about-heading">About</h2>
+        <p>Learn more about this site template and its features.</p>
+      </article>
+
+      <article class="card">
+        <h3>Technology Stack</h3>
+        <p>Built purely with vanilla web standards:</p>
+        <ul style="margin-top: 0.75rem; padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.5rem;">
+          <li><strong>HTML5</strong> for clean semantic markup.</li>
+          <li><strong>Modern CSS</strong> featuring custom properties, flexbox, grid, and dark mode theming.</li>
+          <li><strong>Vanilla JavaScript</strong> for fast, dependency-free interactive logic.</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h3>Template Overview</h3>
+        <p>Designed for rapid authoring and effortless static hosting on any web server or FTP destination. Fast to load, easy to customize, and completely framework-free.</p>
+      </article>
+    </section>
   </main>
+
+  <!-- Fixed Bottom Footer -->
+  <footer class="bottom-bar">
+    <span class="bottom-bar__link">
+      (see more projects by <a href="https://tanguay.info" target="_blank" rel="noopener noreferrer">Edward</a>)
+    </span>
+  </footer>
 </body>
 </html>

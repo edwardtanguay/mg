@@ -59,7 +59,7 @@ async function uploadToFtp(): Promise<void> {
     console.log(`[deploy] Remote directory ensured: ${rawRemoteDir}`);
 
     // Files and folders to upload
-    const entriesToDeploy = ["index.html", "css", "js", "data", "assets"];
+    const entriesToDeploy = ["index.html", "css", "js", "data", "images", "assets"];
 
     for (const entry of entriesToDeploy) {
       const localPath = path.resolve(entry);

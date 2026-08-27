@@ -282,10 +282,10 @@ body {
   letter-spacing: 0.01em;
 }
 
-/* Welcome Feature Tiles (Videos & Articles) */
+/* Welcome Feature Navigation Tiles (Side-by-Side with Overlay Text) */
 .welcome-features {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 1.5rem;
   margin-top: 1.75rem;
 }
@@ -296,52 +296,74 @@ body {
   border-radius: var(--radius);
   overflow: hidden;
   text-decoration: none;
-  color: var(--text-color);
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
-  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.4s ease;
+  color: #ffffff;
+  display: block;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.45s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.45s ease;
   position: relative;
 }
 
 .feature-tile:hover {
-  transform: translateY(-5px);
+  transform: translateY(-6px);
   border-color: var(--primary-color);
-  box-shadow: 0 10px 28px rgba(194, 94, 46, 0.14);
+  box-shadow: 0 14px 32px rgba(194, 94, 46, 0.22);
 }
 
-.feature-tile__image-wrapper {
+.feature-tile__media {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 9;
+  height: 330px;
   overflow: hidden;
-  background-color: var(--surface-hover);
+  background-color: #171311;
 }
 
 .feature-tile__image {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+  transition: transform 0.7s cubic-bezier(0.25, 1, 0.5, 1), filter 0.5s ease;
 }
 
 .feature-tile:hover .feature-tile__image {
-  transform: scale(1.05);
+  transform: scale(1.07);
 }
 
-.feature-tile__overlay {
+.feature-tile__gradient {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(23, 19, 17, 0.4) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(23, 19, 17, 0.1) 0%,
+    rgba(23, 19, 17, 0.35) 35%,
+    rgba(23, 19, 17, 0.82) 75%,
+    rgba(23, 19, 17, 0.96) 100%
+  );
+  transition: background 0.4s ease;
   pointer-events: none;
 }
 
+.feature-tile:hover .feature-tile__gradient {
+  background: linear-gradient(
+    180deg,
+    rgba(23, 19, 17, 0.05) 0%,
+    rgba(23, 19, 17, 0.3) 30%,
+    rgba(23, 19, 17, 0.85) 70%,
+    rgba(23, 19, 17, 0.98) 100%
+  );
+}
+
 .feature-tile__content {
-  padding: 1.5rem;
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
-  flex: 1;
+  justify-content: flex-end;
+  padding: 1.5rem;
+  z-index: 2;
+  pointer-events: none;
 }
 
 .feature-tile__badge {
@@ -349,38 +371,41 @@ body {
   align-self: flex-start;
   font-size: 0.75rem;
   font-weight: 700;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  background-color: var(--accent-soft);
-  color: var(--accent-color);
-  padding: 0.2rem 0.65rem;
+  background-color: rgba(254, 243, 199, 0.92);
+  color: #92400e;
+  padding: 0.25rem 0.75rem;
   border-radius: 999px;
   margin-bottom: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 [data-theme="dark"] .feature-tile__badge {
-  color: #fbbf24;
+  background-color: rgba(251, 191, 36, 0.9);
+  color: #451a03;
 }
 
 .feature-tile__title {
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.45rem 0;
   font-family: var(--font-serif);
-  font-size: 1.3rem;
+  font-size: 1.45rem;
   font-weight: 700;
-  color: var(--text-color);
+  color: #ffffff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
   transition: color var(--transition-speed) ease;
 }
 
 .feature-tile:hover .feature-tile__title {
-  color: var(--primary-color);
+  color: #fbd5c3;
 }
 
 .feature-tile__description {
-  margin: 0 0 1.25rem 0;
-  font-size: 0.95rem;
-  line-height: 1.6;
-  color: var(--text-muted);
-  flex: 1;
+  margin: 0 0 1.15rem 0;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7);
 }
 
 .feature-tile__action {
@@ -388,17 +413,29 @@ body {
   align-items: center;
   gap: 0.5rem;
   font-weight: 600;
-  font-size: 0.92rem;
-  color: var(--primary-color);
-  margin-top: auto;
-  transition: transform 0.3s ease, color 0.3s ease;
+  font-size: 0.88rem;
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  align-self: flex-start;
+  transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .feature-tile__action svg {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   stroke: currentColor;
   transition: transform 0.3s ease;
+}
+
+.feature-tile:hover .feature-tile__action {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  box-shadow: 0 4px 14px rgba(194, 94, 46, 0.4);
 }
 
 .feature-tile:hover .feature-tile__action svg {
@@ -699,6 +736,15 @@ body {
   .article-card__media {
     width: 100%;
     height: 200px;
+  }
+
+  .welcome-features {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .feature-tile__media {
+    height: 270px;
   }
 
   .coming-soon-card {

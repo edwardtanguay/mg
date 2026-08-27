@@ -30,11 +30,25 @@ export function parseArticles(): void {
     }
 
     const parts = trimmedLine.split(";");
-    if (parts.length >= 3) {
-      const id = parts[0].trim();
-      const url = parts[1].trim();
-      const title = parts[2].trim();
-      const summary = parts.slice(3).join(";").trim();
+    if (parts.length >= 4) {
+      // Format: timestamp; id; url; title; summary (optional timestamp at index 0)
+      let id = "";
+      let url = "";
+      let title = "";
+      let summary = "";
+
+      if (parts.length >= 5) {
+        // Timestamp is parts[0]
+        id = parts[1].trim();
+        url = parts[2].trim();
+        title = parts[3].trim();
+        summary = parts.slice(4).join(";").trim();
+      } else {
+        id = parts[0].trim();
+        url = parts[1].trim();
+        title = parts[2].trim();
+        summary = parts.slice(3).join(";").trim();
+      }
 
       if (id && url && title) {
         articles.push({ id, url, title, summary });

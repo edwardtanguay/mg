@@ -96,7 +96,7 @@ body {
 .theme-toggle svg {
   width: 18px;
   height: 18px;
-  fill: currentColor;
+  stroke: currentColor;
   transition: transform var(--transition-speed) ease;
 }
 

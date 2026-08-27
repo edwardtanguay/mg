@@ -47,7 +47,7 @@ This project includes a `.env.example` file documenting the configuration needed
 FTP_SERVER = ftp.tanguay.info
 FTP_USER = edward@tanguay.info
 FTP_PASSWORD = TODO
-FTP_DIRECTORY = /public_html
+FTP_DIRECTORY = /public_html/infosite001
 ```
 
 ### Setup

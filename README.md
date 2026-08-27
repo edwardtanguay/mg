@@ -18,7 +18,7 @@ A clean, minimalist template for building modern static HTML, CSS, and JavaScrip
 
 - `npm run dev`: Starts the local HTTP development server
 - `npm run pd`: Runs the data parsing pipeline, parsing all files in `/data`
-- `npm run deploy`: Deployes site to FTP server based on data in `.env`
+- `npm run deploy`: Deploys site to FTP server based on data in `.env`
 
 ---
 

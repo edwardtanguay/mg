@@ -269,6 +269,9 @@ body {
 }
 
 .link-item__anchor {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
   color: var(--primary-color);
   font-weight: 600;
   text-decoration: none;
@@ -282,9 +285,17 @@ body {
   text-underline-offset: 2px;
 }
 
+.link-item__icon {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+}
+
 .link-item__title {
   color: var(--text-muted);
   font-size: 0.9rem;
+  font-style: italic;
 }
 
 /* Quality check utilities */

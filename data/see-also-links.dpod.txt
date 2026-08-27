@@ -1,6 +1,6 @@
 https://fastfollow.vercel.app; groups that discusses AI dev topics on Discord
-https://github.com/edwardtanguay/showcase-nuxt-prisma-turso; template site for Nuxt, Prisma, and Turso (free online database)
-https://tanguay-eu.vercel.app/howtos; over 800 webdev howtos of mine from 2021-2024
+https://github.com/edwardtanguay/showcase-nuxt-prisma-turso; template site for Nuxt, Prisma, and Turso (free online databas, host site free at Vercel)
+https://tanguay-eu.vercel.app/howtos; over 800 webdev howtos from 2021-2024
 
 
 

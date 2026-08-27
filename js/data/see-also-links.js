@@ -6,10 +6,10 @@ export const seeAlsoLinks = [
   },
   {
     "url": "https://github.com/edwardtanguay/showcase-nuxt-prisma-turso",
-    "title": "template site for Nuxt, Prisma, and Turso (free online database)"
+    "title": "template site for Nuxt, Prisma, and Turso (free online databas, host site free at Vercel)"
   },
   {
     "url": "https://tanguay-eu.vercel.app/howtos",
-    "title": "over 800 webdev howtos of mine from 2021-2024"
+    "title": "over 800 webdev howtos from 2021-2024"
   }
 ];

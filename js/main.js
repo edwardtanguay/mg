@@ -228,7 +228,15 @@ function initSeeAlsoLinks() {
     anchor.href = item.url;
     anchor.target = "_blank";
     anchor.rel = "noopener noreferrer";
-    anchor.textContent = displayText;
+
+    // Link icon SVG
+    const linkIconSvg = `
+      <svg class="link-item__icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+      </svg>
+    `;
+    anchor.innerHTML = `${linkIconSvg}<span>${displayText}</span>`;
 
     const titleSpan = document.createElement("span");
     titleSpan.className = "link-item__title";

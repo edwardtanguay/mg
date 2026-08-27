@@ -6,9 +6,9 @@
   <title>Massagen</title>
   
   <!-- Cache-busted stylesheets & scripts -->
-  <link rel="stylesheet" href="css/reset.css?v=20260827130839">
-  <link rel="stylesheet" href="css/main.css?v=20260827130839">
-  <script type="module" src="js/main.js?v=20260827130839"></script>
+  <link rel="stylesheet" href="css/reset.css?v=20260827135709">
+  <link rel="stylesheet" href="css/main.css?v=20260827135709">
+  <script type="module" src="js/main.js?v=20260827135709"></script>
 </head>
 <body>
   <!-- Top Bar -->
@@ -38,10 +38,10 @@
           <a href="#welcome" class="site-nav__link active" data-nav-target="welcome">Willkommen</a>
         </li>
         <li class="site-nav__item">
-          <a href="#articles" class="site-nav__link" data-nav-target="articles">Artikel</a>
+          <a href="#videos" class="site-nav__link" data-nav-target="videos">Videos</a>
         </li>
         <li class="site-nav__item">
-          <a href="#about" class="site-nav__link" data-nav-target="about">Über die Website</a>
+          <a href="#articles" class="site-nav__link" data-nav-target="articles">Artikel</a>
         </li>
       </ul>
     </div>
@@ -62,6 +62,67 @@
         <p>Entdecke die Kunst der achtsamen Partnermassage für tiefe Entspannung, Verbundenheit und ganzheitliches Wohlbefinden in deinem Zuhause.</p>
         <p>Lerne sanfte Techniken, schaffe die perfekte Atmosphäre und genieße wohltuende Momente der Ruhe zu zweit.</p>
       </article>
+
+      <!-- Welcome Feature Navigation Tiles -->
+      <div class="welcome-features">
+        <a href="#videos" class="feature-tile" data-nav-target="videos">
+          <div class="feature-tile__image-wrapper">
+            <img src="images/pages/videos.jpg" alt="Massage Video-Anleitungen" class="feature-tile__image" loading="lazy">
+            <div class="feature-tile__overlay"></div>
+          </div>
+          <div class="feature-tile__content">
+            <span class="feature-tile__badge">Demnächst</span>
+            <h3 class="feature-tile__title">Video-Anleitungen</h3>
+            <p class="feature-tile__description">Praktische Massage-Griffe und stimmungsvolle Video-Workshops für zu Hause.</p>
+            <div class="feature-tile__action">
+              <span>Zu den Videos</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M5 12h14"></path>
+                <path d="m12 5 7 7-7 7"></path>
+              </svg>
+            </div>
+          </div>
+        </a>
+
+        <a href="#articles" class="feature-tile" data-nav-target="articles">
+          <div class="feature-tile__image-wrapper">
+            <img src="images/pages/articles.jpg" alt="Massage Artikel und Ratgeber" class="feature-tile__image" loading="lazy">
+            <div class="feature-tile__overlay"></div>
+          </div>
+          <div class="feature-tile__content">
+            <span class="feature-tile__badge">Ratgeber</span>
+            <h3 class="feature-tile__title">Artikel & Tipps</h3>
+            <p class="feature-tile__description">Ausgewählte Anleitungen, Massageöle, Vorbereitung und achtsame Techniken.</p>
+            <div class="feature-tile__action">
+              <span>Zu den Artikeln</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M5 12h14"></path>
+                <path d="m12 5 7 7-7 7"></path>
+              </svg>
+            </div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Videos View -->
+    <section id="view-videos" class="page-view" aria-labelledby="videos-heading">
+      <h2 id="videos-heading" style="display: none;">Videos</h2>
+      <div class="coming-soon-card">
+        <div class="coming-soon__icon-wrapper">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="coming-soon__icon" aria-hidden="true">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+        </div>
+        <span class="coming-soon__badge">In Vorbereitung</span>
+        <h2 class="coming-soon__title">Demnächst verfügbar</h2>
+        <p class="coming-soon__description">
+          Wir bereiten für dich professionelle Video-Anleitungen und geführte Massage-Sequenzen für die entspannte Partnermassage zu Hause vor.
+        </p>
+        <p class="coming-soon__subtext">
+          Schau bald wieder vorbei oder entdecke in der Zwischenzeit unsere <a href="#articles" data-nav-target="articles" class="coming-soon__inline-link">ausgewählten Artikel & Ratgeber</a>.
+        </p>
+      </div>
     </section>
 
     <!-- Articles View -->
@@ -71,14 +132,6 @@
       <div class="articles-grid" id="articles-container">
         <!-- Rendered dynamically by js/main.js -->
       </div>
-    </section>
-
-    <!-- About View -->
-    <section id="view-about" class="page-view" aria-labelledby="about-heading">
-      <article class="card">
-        <h2 id="about-heading">Über die Website</h2>
-        <p>Hier lernst du die Grundlagen von Partnermassagen für mehr Wohlbefinden, Gesundheit und zur Vorbeugung von Verletzungen.</p>
-      </article>
     </section>
   </main>
 

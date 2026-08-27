@@ -26,23 +26,30 @@ function renderArticles() {
 
   const articlesHtml = articles
     .map((item) => {
+      const escapedId = escapeHtml(item.id || "");
       const escapedTitle = escapeHtml(item.title);
       const escapedSummary = escapeHtml(item.summary);
       const escapedUrl = encodeURI(item.url);
+      const imageSrc = `images/articles/${escapedId}.jpg`;
 
       return `
         <article class="article-card">
-          <h3 class="article-card__title">${escapedTitle}</h3>
-          <p class="article-card__summary">${escapedSummary}</p>
-          <div class="article-card__action">
-            <a href="${escapedUrl}" class="article-btn" target="_blank" rel="noopener noreferrer">
-              <span>Zum Artikel</span>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                <polyline points="15 3 21 3 21 9"></polyline>
-                <line x1="10" y1="14" x2="21" y2="3"></line>
-              </svg>
-            </a>
+          <div class="article-card__media">
+            <img src="${imageSrc}" alt="${escapedTitle}" class="article-card__img" loading="lazy" onerror="this.parentElement.style.display='none'">
+          </div>
+          <div class="article-card__body">
+            <h3 class="article-card__title">${escapedTitle}</h3>
+            <p class="article-card__summary">${escapedSummary}</p>
+            <div class="article-card__action">
+              <a href="${escapedUrl}" class="article-btn" target="_blank" rel="noopener noreferrer">
+                <span>Zum Artikel</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+              </a>
+            </div>
           </div>
         </article>
       `;
@@ -201,19 +208,27 @@ function initNavigation() {
     });
   }
 
-  // Attach click listeners to nav links
-  navLinks.forEach((link) => {
-    link.addEventListener("click", (e) => {
-      e.preventDefault();
-      const targetId = link.getAttribute("data-nav-target");
-      if (targetId) {
+  // Attach click listeners to any element with data-nav-target (nav links, feature tiles, inline links)
+  document.addEventListener("click", (e) => {
+    const targetElement = e.target.closest("[data-nav-target]");
+    if (targetElement) {
+      const targetId = targetElement.getAttribute("data-nav-target");
+      if (targetId && document.getElementById(`view-${targetId}`)) {
+        e.preventDefault();
         switchView(targetId);
-        history.replaceState(null, "", `#${targetId}`);
+        history.pushState(null, "", `#${targetId}`);
       }
-    });
+    }
   });
 
-  // Handle hash on initial load or popstate
+  // Handle browser back/forward and initial hash load
+  window.addEventListener("popstate", () => {
+    const currentHash = window.location.hash.replace("#", "") || "welcome";
+    if (document.getElementById(`view-${currentHash}`)) {
+      switchView(currentHash);
+    }
+  });
+
   const initialHash = window.location.hash.replace("#", "");
   if (initialHash && document.getElementById(`view-${initialHash}`)) {
     switchView(initialHash);

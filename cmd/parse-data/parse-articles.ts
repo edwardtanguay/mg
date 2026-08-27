@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 export interface ArticleItem {
+  id: string;
   url: string;
   title: string;
   summary: string;
@@ -29,13 +30,14 @@ export function parseArticles(): void {
     }
 
     const parts = trimmedLine.split(";");
-    if (parts.length >= 2) {
-      const url = parts[0].trim();
-      const title = parts[1].trim();
-      const summary = parts.slice(2).join(";").trim();
+    if (parts.length >= 3) {
+      const id = parts[0].trim();
+      const url = parts[1].trim();
+      const title = parts[2].trim();
+      const summary = parts.slice(3).join(";").trim();
 
-      if (url && title) {
-        articles.push({ url, title, summary });
+      if (id && url && title) {
+        articles.push({ id, url, title, summary });
       }
     }
   }

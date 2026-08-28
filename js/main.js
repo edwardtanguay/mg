@@ -148,19 +148,10 @@ function renderNewestFeed() {
     .map((item) => {
       const escapedTitle = escapeHtml(item.title);
       const escapedThumb = encodeURI(item.thumbSrc);
-      const escapedType = escapeHtml(item.typeLabel);
       const dateInfo = getRelativeDateInfo(item.whenAdded, false);
-      const dateClass = dateInfo.isOld
-        ? "newest-item-row__date newest-item-row__date--old"
-        : "newest-item-row__date";
-
-      // Type icons
-      let typeIcon = `<svg class="feed-item__type-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>`;
-      if (item.itemType === "video") {
-        typeIcon = `<svg class="feed-item__type-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2.5"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>`;
-      } else if (item.itemType === "concept") {
-        typeIcon = `<svg class="feed-item__type-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`;
-      }
+      const metaLabel = !dateInfo.isOld && dateInfo.text
+        ? `${escapeHtml(item.typeLabel)} – ${escapeHtml(dateInfo.text)}`
+        : escapeHtml(item.typeLabel);
 
       return `
         <a href="#${item.targetHash}" class="newest-item-row" data-nav-target="${item.targetHash}" title="${escapedTitle}">
@@ -169,11 +160,7 @@ function renderNewestFeed() {
           </div>
           <div class="newest-item-row__content">
             <div class="newest-item-row__meta">
-              <span class="newest-item-row__badge newest-item-row__badge--${item.itemType}">
-                ${typeIcon}
-                <span>${escapedType}</span>
-              </span>
-              ${dateInfo.text ? `<span class="${dateClass}">${escapeHtml(dateInfo.text)}</span>` : ""}
+              <span class="newest-item-row__date">${metaLabel}</span>
             </div>
             <h4 class="newest-item-row__title">${escapedTitle}</h4>
           </div>

@@ -574,40 +574,7 @@ body {
   gap: 0.5rem;
 }
 
-.newest-item-row__badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  font-size: 0.72rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  padding: 0.15rem 0.5rem;
-  border-radius: 4px;
-  background-color: #dcfce7;
-  color: #15803d;
-}
-
-[data-theme="dark"] .newest-item-row__badge {
-  background-color: #143521;
-  color: #86efac;
-}
-
-.newest-item-row__badge--video,
-.newest-item-row__badge--article,
-.newest-item-row__badge--concept {
-  background-color: #dcfce7;
-  color: #15803d;
-}
-
-[data-theme="dark"] .newest-item-row__badge--video,
-[data-theme="dark"] .newest-item-row__badge--article,
-[data-theme="dark"] .newest-item-row__badge--concept {
-  background-color: #143521;
-  color: #86efac;
-}
-
-/* Aktuelles relative date: plain yellow text for recent (<= 7 days) */
+/* Aktuelles meta label: plain yellow text */
 .newest-item-row__date {
   display: inline-block;
   font-size: 0.8rem;
@@ -620,16 +587,6 @@ body {
 
 [data-theme="dark"] .newest-item-row__date {
   color: #facc15;
-}
-
-/* Older than 7 days: muted warm grayish-tan */
-.newest-item-row__date--old {
-  color: #9c8577;
-  font-weight: 500;
-}
-
-[data-theme="dark"] .newest-item-row__date--old {
-  color: #827065;
 }
 
 /* Aktuelles title: normal text, not bold, so more fits on the line */

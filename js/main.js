@@ -187,7 +187,8 @@ function renderVideos() {
       const rawId = item.id || "";
       const escapedId = escapeHtml(rawId);
       const escapedTitle = escapeHtml(item.title);
-      const escapedSummary = escapeHtml(item.summary);
+      const collapsedSummary = parseMarkdown(item.summary, false);
+      const expandedSummary = parseMarkdown(item.summary, true);
       const escapedUrl = encodeURI(item.url);
       const imageSrc = `images/videos/${escapedId}.jpg`;
       const dateInfo = getRelativeDateInfo(item.whenAdded);
@@ -222,9 +223,13 @@ function renderVideos() {
           <div class="article-card__body">
             ${supertitleHtml}
             <h3 class="article-card__title">${escapedTitle}</h3>
-            <p class="article-card__summary">
+            <p class="article-card__summary article-card__summary--collapsed">
               <span class="article-card__summary-prefix">Summary:</span>
-              <span class="article-card__summary-text">${escapedSummary}</span>
+              <span class="article-card__summary-text">${collapsedSummary}</span>
+            </p>
+            <p class="article-card__summary article-card__summary--expanded">
+              <span class="article-card__summary-prefix">Summary:</span>
+              <span class="article-card__summary-text">${expandedSummary}</span>
             </p>
             <div class="article-card__mobile-action">
               <a href="${escapedUrl}" class="article-card__cta-btn article-card__cta-btn--video" target="_blank" rel="noopener noreferrer">
@@ -262,7 +267,8 @@ function renderArticles() {
       const rawId = item.id || "";
       const escapedId = escapeHtml(rawId);
       const escapedTitle = escapeHtml(item.title);
-      const escapedSummary = escapeHtml(item.summary);
+      const collapsedSummary = parseMarkdown(item.summary, false);
+      const expandedSummary = parseMarkdown(item.summary, true);
       const escapedUrl = encodeURI(item.url);
       const imageSrc = `images/articles/${escapedId}.jpg`;
       const dateInfo = getRelativeDateInfo(item.whenAdded);
@@ -292,9 +298,13 @@ function renderArticles() {
           <div class="article-card__body">
             ${supertitleHtml}
             <h3 class="article-card__title">${escapedTitle}</h3>
-            <p class="article-card__summary">
+            <p class="article-card__summary article-card__summary--collapsed">
               <span class="article-card__summary-prefix">Summary:</span>
-              <span class="article-card__summary-text">${escapedSummary}</span>
+              <span class="article-card__summary-text">${collapsedSummary}</span>
+            </p>
+            <p class="article-card__summary article-card__summary--expanded">
+              <span class="article-card__summary-prefix">Summary:</span>
+              <span class="article-card__summary-text">${expandedSummary}</span>
             </p>
             <div class="article-card__mobile-action">
               <a href="${escapedUrl}" class="article-card__cta-btn article-card__cta-btn--article" target="_blank" rel="noopener noreferrer">
@@ -332,7 +342,8 @@ function renderConcepts() {
       const rawId = item.id || "";
       const escapedId = escapeHtml(rawId);
       const escapedTitle = escapeHtml(item.title);
-      const escapedSummary = escapeHtml(item.summary);
+      const collapsedSummary = parseMarkdown(item.summary, false);
+      const expandedSummary = parseMarkdown(item.summary, true);
       const imageSrc = `images/concepts/${escapedId}.jpg`;
       const dateInfo = getRelativeDateInfo(item.whenAdded);
       const supertitleClass = dateInfo.isOld
@@ -361,9 +372,13 @@ function renderConcepts() {
           <div class="article-card__body">
             ${supertitleHtml}
             <h3 class="article-card__title">${escapedTitle}</h3>
-            <p class="article-card__summary">
+            <p class="article-card__summary article-card__summary--collapsed">
               <span class="article-card__summary-prefix">Summary:</span>
-              <span class="article-card__summary-text">${escapedSummary}</span>
+              <span class="article-card__summary-text">${collapsedSummary}</span>
+            </p>
+            <p class="article-card__summary article-card__summary--expanded">
+              <span class="article-card__summary-prefix">Summary:</span>
+              <span class="article-card__summary-text">${expandedSummary}</span>
             </p>
           </div>
         </article>
@@ -394,6 +409,12 @@ function setupCardInteractions(container, type) {
 
       // If clicking prominent mobile CTA button, allow navigation to external URL
       if (e.target.closest(".article-card__cta-btn")) {
+        e.stopPropagation();
+        return;
+      }
+
+      // If clicking inline markdown link inside expanded card, allow opening in new tab
+      if (card.classList.contains("is-expanded") && e.target.closest("a.inline-markdown-link")) {
         e.stopPropagation();
         return;
       }
@@ -506,6 +527,60 @@ function escapeHtml(str) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+/**
+ * Checks if a given URL points to YouTube (watch, short, embed, mobile)
+ */
+function isYouTubeUrl(url) {
+  if (!url) return false;
+  return /^(https?:\/\/)?(www\.|m\.)?(youtube\.com|youtu\.be)\//i.test(url.trim());
+}
+
+/**
+ * Returns compact inline SVG for YouTube logo with red container and white play triangle
+ */
+function getYouTubeIconSvg() {
+  return `<span class="youtube-inline-badge" aria-label="YouTube Video"><svg class="youtube-inline-icon" viewBox="0 0 24 17" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="17" rx="4.5" fill="#FF0000"/><polygon points="9.5,4.5 16.5,8.5 9.5,12.5" fill="#FFFFFF"/></svg></span>`;
+}
+
+/**
+ * Parse Markdown text with support for bold, italic, inline code, and links (with YouTube icon)
+ * @param {string} text - The input markdown text
+ * @param {boolean} [interactiveLinks=true] - If false, renders links as plain styled text rather than active <a> tags
+ */
+function parseMarkdown(text, interactiveLinks = true) {
+  if (!text) return "";
+
+  // 1. First escape HTML characters for security
+  let formatted = escapeHtml(text);
+
+  // 2. Bold: **text** or __text__
+  formatted = formatted.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+  formatted = formatted.replace(/__(.*?)__/g, "<strong>$1</strong>");
+
+  // 3. Italic: *text* or _text_ (ensure not breaking URLs or underscores within words)
+  formatted = formatted.replace(/(^|[^\w\\])\*([^\*]+?)\*/g, "$1<em>$2</em>");
+  formatted = formatted.replace(/(^|[^\w\\])_([^_]+?)_/g, "$1<em>$2</em>");
+
+  // 4. Inline code: `code`
+  formatted = formatted.replace(/`([^`]+?)`/g, "<code>$1</code>");
+
+  // 5. Links: [label](url)
+  formatted = formatted.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, label, rawUrl) => {
+    if (!interactiveLinks) {
+      // In collapsed view, strip link markup completely so it looks like regular plain text
+      return label;
+    }
+
+    // Unescape quotes/entities in URL that escapeHtml touched
+    const cleanUrl = rawUrl.replace(/&amp;/g, "&").replace(/&#039;/g, "'").replace(/&quot;/g, '"');
+    const isYt = isYouTubeUrl(cleanUrl);
+    const ytIconHtml = isYt ? `${getYouTubeIconSvg()}&nbsp;` : "";
+    return `<a href="${encodeURI(cleanUrl)}" class="inline-markdown-link${isYt ? " inline-markdown-link--youtube" : ""}" target="_blank" rel="noopener noreferrer">${ytIconHtml}${label}</a>`;
+  });
+
+  return formatted;
 }
 
 /* Footer visibility based on config */

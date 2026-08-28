@@ -847,7 +847,11 @@ body {
   color: var(--text-color);
 }
 
-.article-card.is-collapsed .article-card__summary {
+.article-card.is-collapsed .article-card__summary--expanded {
+  display: none !important;
+}
+
+.article-card.is-collapsed .article-card__summary--collapsed {
   margin: 0;
   font-size: 0.86rem;
   line-height: 1.4;
@@ -859,8 +863,88 @@ body {
   text-overflow: ellipsis;
 }
 
+.article-card.is-expanded .article-card__summary--collapsed {
+  display: none !important;
+}
+
 .article-card.is-collapsed .article-card__action {
   display: none;
+}
+
+/* =========================================
+   INLINE MARKDOWN & YOUTUBE LINK STYLES
+   ========================================= */
+.inline-markdown-link {
+  color: var(--primary-color);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2.5px;
+  text-decoration-thickness: 1.5px;
+  display: inline;
+  white-space: normal;
+  transition: color 0.2s ease, text-decoration-color 0.2s ease, filter 0.2s ease;
+  cursor: pointer;
+}
+
+.inline-markdown-link:hover {
+  color: var(--primary-hover);
+  text-decoration-thickness: 2px;
+}
+
+.inline-markdown-link--youtube {
+  color: var(--primary-color);
+}
+
+.inline-markdown-link--youtube:hover {
+  color: #e02424;
+}
+
+[data-theme="dark"] .inline-markdown-link--youtube:hover {
+  color: #ff4d4d;
+}
+
+/* Inline YouTube Badge & Icon - Glued to text without height disruptions */
+.youtube-inline-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: -0.1em;
+  margin-right: 0.05rem;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.youtube-inline-icon {
+  width: 1.15em;
+  height: 0.85em;
+  display: inline-block;
+  border-radius: 2.5px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.25));
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.inline-markdown-link:hover .youtube-inline-icon {
+  transform: scale(1.1);
+  filter: drop-shadow(0 2px 4px rgba(255, 0, 0, 0.4));
+}
+
+
+.article-card__summary code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.88em;
+  background-color: var(--surface-hover);
+  border: 1px solid var(--border-color);
+  padding: 0.12em 0.35em;
+  border-radius: 4px;
+}
+
+.article-card__summary strong {
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+.article-card__summary em {
+  font-style: italic;
 }
 
 /* =========================================

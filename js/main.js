@@ -1,10 +1,13 @@
 import { config } from "./config.js";
 import { articles } from "./data/articles.js";
+import { videos } from "./data/videos.js";
 
 function initApp() {
   initThemeToggle();
   initNavigation();
   initFooter();
+  renderNewestFeed();
+  renderVideos();
   renderArticles();
 }
 
@@ -17,34 +20,187 @@ if (document.readyState === "loading") {
 /**
  * Format relative date in German based on timestamp string (e.g. "2026-08-27 16:00:25")
  */
-function formatRelativeDate(dateStr) {
+function formatRelativeDate(dateStr, withSuffix = true) {
   if (!dateStr) return "";
   const cleanedStr = dateStr.replace(" ", "T");
-  const articleDate = new Date(cleanedStr);
-  if (isNaN(articleDate.getTime())) return "";
+  const itemDate = new Date(cleanedStr);
+  if (isNaN(itemDate.getTime())) return "";
 
   const now = new Date();
 
   // Reset hours to compare calendar days
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const artDay = new Date(articleDate.getFullYear(), articleDate.getMonth(), articleDate.getDate());
+  const itemDay = new Date(itemDate.getFullYear(), itemDate.getMonth(), itemDate.getDate());
 
-  const diffMs = today.getTime() - artDay.getTime();
+  const diffMs = today.getTime() - itemDay.getTime();
   const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
 
   if (diffDays <= 0) {
-    return "heute hinzugefügt";
+    return withSuffix ? "heute hinzugefügt" : "heute";
   } else if (diffDays === 1) {
-    return "gestern hinzugefügt";
+    return withSuffix ? "gestern hinzugefügt" : "gestern";
   } else if (diffDays < 30) {
-    return `vor ${diffDays} Tagen hinzugefügt`;
+    return withSuffix ? `vor ${diffDays} Tagen hinzugefügt` : `vor ${diffDays} Tagen`;
   } else if (diffDays < 365) {
     const months = Math.floor(diffDays / 30);
-    return months === 1 ? "vor 1 Monat hinzugefügt" : `vor ${months} Monaten hinzugefügt`;
+    return months === 1
+      ? (withSuffix ? "vor 1 Monat hinzugefügt" : "vor 1 Monat")
+      : (withSuffix ? `vor ${months} Monaten hinzugefügt` : `vor ${months} Monaten`);
   } else {
     const years = Math.floor(diffDays / 365);
-    return years === 1 ? "vor 1 Jahr hinzugefügt" : `vor ${years} Jahren hinzugefügt`;
+    return years === 1
+      ? (withSuffix ? "vor 1 Jahr hinzugefügt" : "vor 1 Jahr")
+      : (withSuffix ? `vor ${years} Jahren hinzugefügt` : `vor ${years} Jahren`);
   }
+}
+
+/**
+ * Render the 2 newest items (videos + articles aggregated) under "Aktuelles:" on the Welcome page
+ */
+function renderNewestFeed() {
+  const container = document.getElementById("newest-feed-container");
+  if (!container) return;
+
+  const combinedItems = [
+    ...(Array.isArray(articles)
+      ? articles.map((a) => ({
+          ...a,
+          itemType: "article",
+          typeLabel: "Artikel",
+          targetView: "articles",
+          thumbSrc: `images/articles/${a.id}.jpg`,
+        }))
+      : []),
+    ...(Array.isArray(videos)
+      ? videos.map((v) => ({
+          ...v,
+          itemType: "video",
+          typeLabel: "Video",
+          targetView: "videos",
+          thumbSrc: `images/videos/${v.id}.jpg`,
+        }))
+      : []),
+  ];
+
+  // Sort newest first by whenAdded
+  combinedItems.sort((a, b) => {
+    if (!a.whenAdded) return 1;
+    if (!b.whenAdded) return -1;
+    return b.whenAdded.localeCompare(a.whenAdded);
+  });
+
+  const latestTwo = combinedItems.slice(0, 2);
+
+  if (latestTwo.length === 0) {
+    container.innerHTML = "<p class='newest-feed__empty'>Zurzeit keine aktuellen Einträge.</p>";
+    return;
+  }
+
+  const itemsHtml = latestTwo
+    .map((item) => {
+      const escapedTitle = escapeHtml(item.title);
+      const escapedThumb = encodeURI(item.thumbSrc);
+      const escapedType = escapeHtml(item.typeLabel);
+      const relativeTime = formatRelativeDate(item.whenAdded, false);
+
+      const typeIcon =
+        item.itemType === "video"
+          ? `<svg class="feed-item__type-icon" viewBox="0 0 24 24" width="15" height="15" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>`
+          : `<svg class="feed-item__type-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>`;
+
+      return `
+        <a href="#${item.targetView}" class="newest-item-row" data-nav-target="${item.targetView}" title="${escapedTitle}">
+          <div class="newest-item-row__media">
+            <img src="${escapedThumb}" alt="${escapedTitle}" class="newest-item-row__img" loading="lazy" onerror="this.style.display='none'">
+            ${
+              item.itemType === "video"
+                ? `<span class="newest-item-row__play-badge">
+                    <svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"></polygon></svg>
+                   </span>`
+                : ""
+            }
+          </div>
+          <div class="newest-item-row__content">
+            <div class="newest-item-row__meta">
+              <span class="newest-item-row__badge newest-item-row__badge--${item.itemType}">
+                ${typeIcon}
+                <span>${escapedType}</span>
+              </span>
+              ${relativeTime ? `<span class="newest-item-row__date">${escapeHtml(relativeTime)}</span>` : ""}
+            </div>
+            <h4 class="newest-item-row__title">${escapedTitle}</h4>
+          </div>
+        </a>
+      `;
+    })
+    .join("");
+
+  container.innerHTML = itemsHtml;
+}
+
+/* Render videos dynamically with collapsed and expanded states */
+function renderVideos() {
+  const videosContainer = document.getElementById("videos-container");
+  if (!videosContainer) return;
+
+  if (!Array.isArray(videos) || videos.length === 0) {
+    videosContainer.innerHTML = "<p>Keine Videos verfügbar.</p>";
+    return;
+  }
+
+  const videosHtml = videos
+    .map((item, index) => {
+      const escapedId = escapeHtml(item.id || "");
+      const escapedTitle = escapeHtml(item.title);
+      const escapedSummary = escapeHtml(item.summary);
+      const escapedUrl = encodeURI(item.url);
+      const imageSrc = `images/videos/${escapedId}.jpg`;
+      const relativeDate = formatRelativeDate(item.whenAdded);
+      const supertitleHtml = relativeDate
+        ? `<span class="article-card__supertitle">${escapeHtml(relativeDate)}</span>`
+        : "";
+
+      return `
+        <article class="article-card is-video is-collapsed" data-video-index="${index}" tabindex="0" role="button" aria-expanded="false">
+          <div class="article-card__media article-card__media--video">
+            <img src="${imageSrc}" alt="${escapedTitle}" class="article-card__img" loading="lazy" onerror="this.parentElement.style.display='none'">
+            <div class="video-play-indicator" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+                <polygon points="6 4 20 12 6 20 6 4"></polygon>
+              </svg>
+            </div>
+            <span class="video-tag-badge">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              </svg>
+              <span>Video</span>
+            </span>
+          </div>
+          <div class="article-card__body">
+            ${supertitleHtml}
+            <h3 class="article-card__title">${escapedTitle}</h3>
+            <p class="article-card__summary">
+              <span class="article-card__summary-prefix">Summary:</span>
+              <span class="article-card__summary-text">${escapedSummary}</span>
+            </p>
+            <div class="article-card__action">
+              <a href="${escapedUrl}" class="article-btn article-btn--primary article-btn--video" target="_blank" rel="noopener noreferrer">
+                <span>Zum Video</span>
+                <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" aria-hidden="true">
+                  <polygon points="6 4 20 12 6 20 6 4"></polygon>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+
+  videosContainer.innerHTML = videosHtml;
+
+  // Setup single-open accordion click & keyboard interaction for videos
+  setupAccordionInteraction(videosContainer, ".article-card");
 }
 
 /* Render articles dynamically with collapsed and expanded states */
@@ -99,34 +255,36 @@ function renderArticles() {
 
   articlesContainer.innerHTML = articlesHtml;
 
-  // Setup single-open accordion click & keyboard interaction
-  const articleCards = articlesContainer.querySelectorAll(".article-card");
+  // Setup single-open accordion click & keyboard interaction for articles
+  setupAccordionInteraction(articlesContainer, ".article-card");
+}
 
-  function closeAllArticlesExcept(targetCard) {
-    articleCards.forEach((c) => {
+function setupAccordionInteraction(container, selector) {
+  const cards = container.querySelectorAll(selector);
+
+  function closeAllCardsExcept(targetCard) {
+    cards.forEach((c) => {
       if (c !== targetCard && c.classList.contains("is-expanded")) {
-        collapseArticle(c);
+        collapseCard(c);
       }
     });
   }
 
-  articleCards.forEach((card) => {
+  cards.forEach((card) => {
     card.addEventListener("click", (e) => {
-      // If clicking "Zum Artikel" link, allow standard link behavior
+      // If clicking button/link, allow standard link behavior
       if (e.target.closest("a.article-btn")) {
         return;
       }
 
-      // If card is collapsed, close other open cards, expand this one, and smooth-scroll to prevent jumping
       if (card.classList.contains("is-collapsed")) {
-        closeAllArticlesExcept(card);
-        expandArticle(card);
+        closeAllCardsExcept(card);
+        expandCard(card);
         requestAnimationFrame(() => {
           card.scrollIntoView({ behavior: "smooth", block: "nearest" });
         });
       } else {
-        // If clicking on the already expanded card, collapse it
-        collapseArticle(card);
+        collapseCard(card);
       }
     });
 
@@ -136,26 +294,26 @@ function renderArticles() {
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
         if (card.classList.contains("is-collapsed")) {
-          closeAllArticlesExcept(card);
-          expandArticle(card);
+          closeAllCardsExcept(card);
+          expandCard(card);
           requestAnimationFrame(() => {
             card.scrollIntoView({ behavior: "smooth", block: "nearest" });
           });
         } else {
-          collapseArticle(card);
+          collapseCard(card);
         }
       }
     });
   });
 }
 
-function expandArticle(card) {
+function expandCard(card) {
   card.classList.remove("is-collapsed");
   card.classList.add("is-expanded");
   card.setAttribute("aria-expanded", "true");
 }
 
-function collapseArticle(card) {
+function collapseCard(card) {
   card.classList.remove("is-expanded");
   card.classList.add("is-collapsed");
   card.setAttribute("aria-expanded", "false");
@@ -274,9 +432,10 @@ function initNavigation() {
 
     // Update active nav link
     navLinks.forEach((link) => {
-      if (link.getAttribute("data-nav-target") === targetId) {
+      const linkTarget = link.getAttribute("data-nav-target");
+      if (link.closest(".site-nav__list") && linkTarget === targetId) {
         link.classList.add("active");
-      } else {
+      } else if (link.closest(".site-nav__list")) {
         link.classList.remove("active");
       }
     });

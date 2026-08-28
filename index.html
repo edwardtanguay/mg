@@ -3,12 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Partnermassage</title>
+  <title>Partnermassage – Entspannung & Techniken für Paare</title>
   
+  <!-- SEO & Social Sharing Metadata -->
+  <meta name="description" content="Entdecke wohltuende Partnermassagen, Schritt-für-Schritt Video-Anleitungen, professionelle Techniken und fundierte Ratgeber für entspannte Momente zu Hause.">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph / Facebook / WhatsApp -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://tanguay.info/">
+  <meta property="og:title" content="Partnermassage – Entspannung & Techniken für Paare">
+  <meta property="og:description" content="Wohltuende Partnermassagen, Video-Workshops & Anleitungen für zu Hause. Schritt für Schritt zu vollkommener Entspannung.">
+  <meta property="og:image" content="images/pages/articles.jpg">
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:site_name" content="Partnermassage">
+
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Partnermassage – Entspannung & Techniken für Paare">
+  <meta name="twitter:description" content="Wohltuende Partnermassagen, Video-Workshops & Anleitungen für zu Hause.">
+  <meta name="twitter:image" content="images/pages/articles.jpg">
+
   <!-- Cache-busted stylesheets & scripts -->
-  <link rel="stylesheet" href="css/reset.css?v=20260828074220">
-  <link rel="stylesheet" href="css/main.css?v=20260828074220">
-  <script type="module" src="js/main.js?v=20260828074220"></script>
+  <link rel="stylesheet" href="css/reset.css?v=20260828081028">
+  <link rel="stylesheet" href="css/main.css?v=20260828081028">
+  <script type="module" src="js/main.js?v=20260828081028"></script>
 </head>
 <body>
   <!-- Top Bar -->
@@ -25,7 +44,7 @@
     </div>
   </header>
 
-  <!-- Navigation Bar -->
+  <!-- Navigation Bar: Videos | Artikel | Konzepte -->
   <nav class="site-nav" aria-label="Hauptnavigation">
     <div class="site-nav__container">
       <button class="site-nav__hamburger" type="button" aria-label="Navigationsmenü umschalten" aria-expanded="false" style="display: none;">
@@ -37,13 +56,13 @@
       </button>
       <ul class="site-nav__list">
         <li class="site-nav__item">
-          <a href="#info" class="site-nav__link active" data-nav-target="info">Willkommen</a>
-        </li>
-        <li class="site-nav__item">
           <a href="#videos" class="site-nav__link" data-nav-target="videos">Videos</a>
         </li>
         <li class="site-nav__item">
           <a href="#articles" class="site-nav__link" data-nav-target="articles">Artikel</a>
+        </li>
+        <li class="site-nav__item">
+          <a href="#concepts" class="site-nav__link" data-nav-target="concepts">Konzepte</a>
         </li>
       </ul>
     </div>
@@ -61,6 +80,14 @@
         </blockquote>
       </div>
 
+      <!-- Newest Items Feed (Aktuelles:) -->
+      <section class="newest-feed" aria-labelledby="newest-feed-heading">
+        <h3 id="newest-feed-heading" class="newest-feed__title">Aktuelles:</h3>
+        <div class="newest-feed__list" id="newest-feed-container">
+          <!-- Rendered dynamically by js/main.js -->
+        </div>
+      </section>
+
       <!-- Welcome Feature Navigation Tiles (Side-by-Side with Overlay Text) -->
       <div class="welcome-features">
         <a href="#videos" class="feature-tile" data-nav-target="videos">
@@ -68,9 +95,9 @@
             <img src="images/pages/videos.jpg" alt="Massage Video-Anleitungen" class="feature-tile__image" loading="lazy">
             <div class="feature-tile__gradient"></div>
             <div class="feature-tile__content">
-              <span class="feature-tile__badge">Demnächst</span>
+              <span class="feature-tile__badge">Videos</span>
               <h3 class="feature-tile__title">Video-Anleitungen</h3>
-              <p class="feature-tile__description">Praktische Massage-Griffe und stimmungsvolle Video-Workshops für zu Hause.</p>
+              <p class="feature-tile__description">Praktische Massage-Griffe und geführte Video-Tutorials für zu Hause.</p>
             </div>
           </div>
         </a>
@@ -82,7 +109,7 @@
             <div class="feature-tile__content">
               <span class="feature-tile__badge">Ratgeber</span>
               <h3 class="feature-tile__title">Artikel & Tipps</h3>
-              <p class="feature-tile__description">Ausgewählte Anleitungen, Vorbereitung und achtsame Techniken für zu Hause.</p>
+              <p class="feature-tile__description">Ausgewählte Anleitungen, Vorbereitung und achtsame Techniken für Paare.</p>
             </div>
           </div>
         </a>
@@ -92,29 +119,39 @@
     <!-- Videos View -->
     <section id="view-videos" class="page-view" aria-labelledby="videos-heading">
       <h2 id="videos-heading" style="display: none;">Videos</h2>
-      <div class="coming-soon-card">
-        <div class="coming-soon__icon-wrapper">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="coming-soon__icon" aria-hidden="true">
-            <polygon points="5 3 19 12 5 21 5 3"></polygon>
-          </svg>
-        </div>
-        <span class="coming-soon__badge">In Vorbereitung</span>
-        <h2 class="coming-soon__title">Demnächst verfügbar</h2>
-        <p class="coming-soon__description">
-          Wir bereiten für dich professionelle Video-Anleitungen und geführte Massage-Sequenzen für die entspannte Partnermassage zu Hause vor.
-        </p>
-        <p class="coming-soon__subtext">
-          Schau bald wieder vorbei oder entdecke in der Zwischenzeit unsere <a href="#articles" data-nav-target="articles" class="coming-soon__inline-link">ausgewählten Artikel & Ratgeber</a>.
-        </p>
+      <p class="section-intro">Ausgewählte Video-Anleitungen und Schritt-für-Schritt Techniken:</p>
+      <div class="videos-grid" id="videos-container">
+        <!-- Rendered dynamically by js/main.js -->
       </div>
     </section>
 
     <!-- Articles View -->
     <section id="view-articles" class="page-view" aria-labelledby="articles-heading">
       <h2 id="articles-heading" style="display: none;">Artikel</h2>
-      <p class="articles-intro">Ausgewählte Ratgeber und Anleitungen für die perfekte Massage zu Hause:</p>
+      <p class="section-intro articles-intro">Ausgewählte Ratgeber und Anleitungen für die perfekte Massage zu Hause:</p>
       <div class="articles-grid" id="articles-container">
         <!-- Rendered dynamically by js/main.js -->
+      </div>
+    </section>
+
+    <!-- Concepts / Konzepte View -->
+    <section id="view-concepts" class="page-view" aria-labelledby="concepts-heading">
+      <h2 id="concepts-heading" style="display: none;">Konzepte</h2>
+      <div class="coming-soon-card">
+        <div class="coming-soon__icon-wrapper">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="coming-soon__icon" aria-hidden="true">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+          </svg>
+        </div>
+        <span class="coming-soon__badge">In Vorbereitung</span>
+        <h2 class="coming-soon__title">Konzepte – Demnächst verfügbar</h2>
+        <p class="coming-soon__description">
+          Hier findest du demnächst ganzheitliche Massagekonzepte, Ablaufpläne für verschiedene Stimmungen und harmonische Kombinationen von Grifftechniken.
+        </p>
+        <p class="coming-soon__subtext">
+          Schau bald wieder vorbei oder entdecke in der Zwischenzeit unsere <a href="#videos" data-nav-target="videos" class="coming-soon__inline-link">Video-Anleitungen</a> und <a href="#articles" data-nav-target="articles" class="coming-soon__inline-link">Ratgeber-Artikel</a>.
+        </p>
       </div>
     </section>
   </main>

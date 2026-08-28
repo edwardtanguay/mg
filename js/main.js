@@ -180,7 +180,7 @@ function renderVideos() {
                 </svg>
               </div>
               <span class="video-tag-badge">
-                <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor">
+                <svg class="video-tag-badge__icon" viewBox="0 0 24 24" width="13" height="13" fill="currentColor">
                   <polygon points="5 3 19 12 5 21 5 3"></polygon>
                 </svg>
                 <span>Video</span>
@@ -194,6 +194,15 @@ function renderVideos() {
               <span class="article-card__summary-prefix">Summary:</span>
               <span class="article-card__summary-text">${escapedSummary}</span>
             </p>
+            <div class="article-card__mobile-action">
+              <a href="${escapedUrl}" class="article-card__cta-btn article-card__cta-btn--video" target="_blank" rel="noopener noreferrer">
+                <span>Zum Video</span>
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="7" y1="17" x2="17" y2="7"></line>
+                  <polyline points="7 7 17 7 17 17"></polyline>
+                </svg>
+              </a>
+            </div>
           </div>
         </article>
       `;
@@ -241,7 +250,7 @@ function renderArticles() {
             <a href="${escapedUrl}" class="article-card__media-link" target="_blank" rel="noopener noreferrer" title="${escapedTitle} lesen (öffnet in neuem Tab)" tabindex="-1">
               <img src="${imageSrc}" alt="${escapedTitle}" class="article-card__img" loading="lazy" onerror="this.parentElement.style.display='none'">
               <span class="article-tag-badge">
-                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg class="article-tag-badge__icon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                   <polyline points="14 2 14 8 20 8"></polyline>
                   <line x1="16" y1="13" x2="8" y2="13"></line>
@@ -259,6 +268,15 @@ function renderArticles() {
               <span class="article-card__summary-prefix">Summary:</span>
               <span class="article-card__summary-text">${escapedSummary}</span>
             </p>
+            <div class="article-card__mobile-action">
+              <a href="${escapedUrl}" class="article-card__cta-btn article-card__cta-btn--article" target="_blank" rel="noopener noreferrer">
+                <span>Zum Artikel</span>
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="7" y1="17" x2="17" y2="7"></line>
+                  <polyline points="7 7 17 7 17 17"></polyline>
+                </svg>
+              </a>
+            </div>
           </div>
         </article>
       `;
@@ -276,10 +294,7 @@ function setupCardInteractions(container, type) {
 
   cards.forEach((card) => {
     card.addEventListener("click", (e) => {
-      // If clicking media link when expanded, allow opening external link
-      if (card.classList.contains("is-expanded") && e.target.closest("a.article-card__media-link")) {
-        return;
-      }
+      const isMobile = window.matchMedia("(max-width: 600px)").matches;
 
       // If clicking close button
       if (e.target.closest("[data-close-item]")) {
@@ -287,6 +302,28 @@ function setupCardInteractions(container, type) {
         e.stopPropagation();
         closeCurrentItem();
         return;
+      }
+
+      // If clicking prominent mobile CTA button, allow navigation to external URL
+      if (e.target.closest(".article-card__cta-btn")) {
+        e.stopPropagation();
+        return;
+      }
+
+      // If card is expanded:
+      if (card.classList.contains("is-expanded")) {
+        // On mobile: clicking anywhere on thumbnail, text or card background goes back
+        if (isMobile) {
+          e.preventDefault();
+          e.stopPropagation();
+          closeCurrentItem();
+          return;
+        }
+
+        // On desktop: if clicking media link when expanded, allow opening external link
+        if (e.target.closest("a.article-card__media-link")) {
+          return;
+        }
       }
 
       // If clicking collapsed card, navigate to its permalink

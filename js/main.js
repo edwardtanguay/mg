@@ -224,11 +224,9 @@ function renderVideos() {
             ${supertitleHtml}
             <h3 class="article-card__title">${escapedTitle}</h3>
             <p class="article-card__summary article-card__summary--collapsed">
-              <span class="article-card__summary-prefix">Summary:</span>
               <span class="article-card__summary-text">${collapsedSummary}</span>
             </p>
             <p class="article-card__summary article-card__summary--expanded">
-              <span class="article-card__summary-prefix">Summary:</span>
               <span class="article-card__summary-text">${expandedSummary}</span>
             </p>
             <div class="article-card__mobile-action">
@@ -299,11 +297,9 @@ function renderArticles() {
             ${supertitleHtml}
             <h3 class="article-card__title">${escapedTitle}</h3>
             <p class="article-card__summary article-card__summary--collapsed">
-              <span class="article-card__summary-prefix">Summary:</span>
               <span class="article-card__summary-text">${collapsedSummary}</span>
             </p>
             <p class="article-card__summary article-card__summary--expanded">
-              <span class="article-card__summary-prefix">Summary:</span>
               <span class="article-card__summary-text">${expandedSummary}</span>
             </p>
             <div class="article-card__mobile-action">
@@ -373,11 +369,9 @@ function renderConcepts() {
             ${supertitleHtml}
             <h3 class="article-card__title">${escapedTitle}</h3>
             <p class="article-card__summary article-card__summary--collapsed">
-              <span class="article-card__summary-prefix">Summary:</span>
               <span class="article-card__summary-text">${collapsedSummary}</span>
             </p>
             <p class="article-card__summary article-card__summary--expanded">
-              <span class="article-card__summary-prefix">Summary:</span>
               <span class="article-card__summary-text">${expandedSummary}</span>
             </p>
           </div>

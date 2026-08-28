@@ -13,12 +13,12 @@ let navigationHistory = {
 
 function initApp() {
   initThemeToggle();
-  initNavigation();
   initFooter();
   renderNewestFeed();
   renderVideos();
   renderArticles();
   renderConcepts();
+  initNavigation();
 }
 
 if (document.readyState === "loading") {
@@ -466,8 +466,25 @@ function saveCurrentScrollPosition() {
 }
 
 function closeCurrentItem() {
-  const returnView = navigationHistory.previousView || "info";
-  const returnScrollY = navigationHistory.previousScrollY || 0;
+  const currentHash = (window.location.hash.replace("#", "") || "").toLowerCase();
+  let returnView = navigationHistory.previousView;
+  let returnScrollY = navigationHistory.previousScrollY || 0;
+
+  // If user loaded directly via permalink without prior navigation history:
+  if (!returnView || returnView === "info" && (currentHash.startsWith("video-") || currentHash.startsWith("article-") || currentHash.startsWith("concept-"))) {
+    if (currentHash.startsWith("video-")) {
+      returnView = "videos";
+      returnScrollY = 0;
+    } else if (currentHash.startsWith("article-")) {
+      returnView = "articles";
+      returnScrollY = 0;
+    } else if (currentHash.startsWith("concept-")) {
+      returnView = "concepts";
+      returnScrollY = 0;
+    } else {
+      returnView = "info";
+    }
+  }
 
   // Update hash back to the originating page view
   window.location.hash = `#${returnView}`;
@@ -731,8 +748,11 @@ function initNavigation() {
     }
   });
 
-  // Handle browser back/forward navigation
+  // Handle browser back/forward navigation and hash changes
   window.addEventListener("popstate", () => {
+    handleRoute(window.location.hash);
+  });
+  window.addEventListener("hashchange", () => {
     handleRoute(window.location.hash);
   });
 

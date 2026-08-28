@@ -2,6 +2,14 @@ import { config } from "./config.js";
 import { articles } from "./data/articles.js";
 import { videos } from "./data/videos.js";
 
+/**
+ * Navigation state tracking for scroll restoration and previous view
+ */
+let navigationHistory = {
+  previousView: "info",
+  previousScrollY: 0,
+};
+
 function initApp() {
   initThemeToggle();
   initNavigation();
@@ -67,7 +75,7 @@ function renderNewestFeed() {
           ...a,
           itemType: "article",
           typeLabel: "Artikel",
-          targetView: "articles",
+          targetHash: `article-${a.id}`,
           thumbSrc: `images/articles/${a.id}.jpg`,
         }))
       : []),
@@ -76,7 +84,7 @@ function renderNewestFeed() {
           ...v,
           itemType: "video",
           typeLabel: "Video",
-          targetView: "videos",
+          targetHash: `video-${v.id}`,
           thumbSrc: `images/videos/${v.id}.jpg`,
         }))
       : []),
@@ -103,22 +111,16 @@ function renderNewestFeed() {
       const escapedType = escapeHtml(item.typeLabel);
       const relativeTime = formatRelativeDate(item.whenAdded, false);
 
+      // Icon for videos without arrow inside Aktuelles feed
       const typeIcon =
         item.itemType === "video"
-          ? `<svg class="feed-item__type-icon" viewBox="0 0 24 24" width="15" height="15" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>`
+          ? `<svg class="feed-item__type-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2.5"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>`
           : `<svg class="feed-item__type-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>`;
 
       return `
-        <a href="#${item.targetView}" class="newest-item-row" data-nav-target="${item.targetView}" title="${escapedTitle}">
+        <a href="#${item.targetHash}" class="newest-item-row" data-nav-target="${item.targetHash}" title="${escapedTitle}">
           <div class="newest-item-row__media">
             <img src="${escapedThumb}" alt="${escapedTitle}" class="newest-item-row__img" loading="lazy" onerror="this.style.display='none'">
-            ${
-              item.itemType === "video"
-                ? `<span class="newest-item-row__play-badge">
-                    <svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"></polygon></svg>
-                   </span>`
-                : ""
-            }
           </div>
           <div class="newest-item-row__content">
             <div class="newest-item-row__meta">
@@ -138,7 +140,7 @@ function renderNewestFeed() {
   container.innerHTML = itemsHtml;
 }
 
-/* Render videos dynamically with collapsed and expanded states */
+/* Render videos dynamically with permalink link support */
 function renderVideos() {
   const videosContainer = document.getElementById("videos-container");
   if (!videosContainer) return;
@@ -150,7 +152,8 @@ function renderVideos() {
 
   const videosHtml = videos
     .map((item, index) => {
-      const escapedId = escapeHtml(item.id || "");
+      const rawId = item.id || "";
+      const escapedId = escapeHtml(rawId);
       const escapedTitle = escapeHtml(item.title);
       const escapedSummary = escapeHtml(item.summary);
       const escapedUrl = encodeURI(item.url);
@@ -161,20 +164,28 @@ function renderVideos() {
         : "";
 
       return `
-        <article class="article-card is-video is-collapsed" data-video-index="${index}" tabindex="0" role="button" aria-expanded="false">
+        <article class="article-card is-video is-collapsed" id="video-card-${escapedId}" data-item-id="${escapedId}" data-item-type="video" data-video-index="${index}" tabindex="0" role="button" aria-expanded="false">
+          <button class="article-card__close-btn" type="button" aria-label="Schließen" title="Schließen" data-close-item>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
           <div class="article-card__media article-card__media--video">
-            <img src="${imageSrc}" alt="${escapedTitle}" class="article-card__img" loading="lazy" onerror="this.parentElement.style.display='none'">
-            <div class="video-play-indicator" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
-                <polygon points="6 4 20 12 6 20 6 4"></polygon>
-              </svg>
-            </div>
-            <span class="video-tag-badge">
-              <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor">
-                <polygon points="5 3 19 12 5 21 5 3"></polygon>
-              </svg>
-              <span>Video</span>
-            </span>
+            <a href="${escapedUrl}" class="article-card__media-link" target="_blank" rel="noopener noreferrer" title="${escapedTitle} ansehen (öffnet in neuem Tab)" tabindex="-1">
+              <img src="${imageSrc}" alt="${escapedTitle}" class="article-card__img" loading="lazy" onerror="this.parentElement.style.display='none'">
+              <div class="video-play-indicator" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+                  <polygon points="6 4 20 12 6 20 6 4"></polygon>
+                </svg>
+              </div>
+              <span class="video-tag-badge">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor">
+                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                <span>Video</span>
+              </span>
+            </a>
           </div>
           <div class="article-card__body">
             ${supertitleHtml}
@@ -183,14 +194,6 @@ function renderVideos() {
               <span class="article-card__summary-prefix">Summary:</span>
               <span class="article-card__summary-text">${escapedSummary}</span>
             </p>
-            <div class="article-card__action">
-              <a href="${escapedUrl}" class="article-btn article-btn--primary article-btn--video" target="_blank" rel="noopener noreferrer">
-                <span>Zum Video</span>
-                <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" aria-hidden="true">
-                  <polygon points="6 4 20 12 6 20 6 4"></polygon>
-                </svg>
-              </a>
-            </div>
           </div>
         </article>
       `;
@@ -199,11 +202,11 @@ function renderVideos() {
 
   videosContainer.innerHTML = videosHtml;
 
-  // Setup single-open accordion click & keyboard interaction for videos
-  setupAccordionInteraction(videosContainer, ".article-card");
+  // Setup permalink trigger click & keyboard interaction for videos
+  setupCardInteractions(videosContainer, "video");
 }
 
-/* Render articles dynamically with collapsed and expanded states */
+/* Render articles dynamically with permalink link support and upper-left badge */
 function renderArticles() {
   const articlesContainer = document.getElementById("articles-container");
   if (!articlesContainer) return;
@@ -215,7 +218,8 @@ function renderArticles() {
 
   const articlesHtml = articles
     .map((item, index) => {
-      const escapedId = escapeHtml(item.id || "");
+      const rawId = item.id || "";
+      const escapedId = escapeHtml(rawId);
       const escapedTitle = escapeHtml(item.title);
       const escapedSummary = escapeHtml(item.summary);
       const escapedUrl = encodeURI(item.url);
@@ -226,9 +230,27 @@ function renderArticles() {
         : "";
 
       return `
-        <article class="article-card is-collapsed" data-article-index="${index}" tabindex="0" role="button" aria-expanded="false">
+        <article class="article-card is-collapsed" id="article-card-${escapedId}" data-item-id="${escapedId}" data-item-type="article" data-article-index="${index}" tabindex="0" role="button" aria-expanded="false">
+          <button class="article-card__close-btn" type="button" aria-label="Schließen" title="Schließen" data-close-item>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
           <div class="article-card__media">
-            <img src="${imageSrc}" alt="${escapedTitle}" class="article-card__img" loading="lazy" onerror="this.parentElement.style.display='none'">
+            <a href="${escapedUrl}" class="article-card__media-link" target="_blank" rel="noopener noreferrer" title="${escapedTitle} lesen (öffnet in neuem Tab)" tabindex="-1">
+              <img src="${imageSrc}" alt="${escapedTitle}" class="article-card__img" loading="lazy" onerror="this.parentElement.style.display='none'">
+              <span class="article-tag-badge">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                  <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                <span>Artikel</span>
+              </span>
+            </a>
           </div>
           <div class="article-card__body">
             ${supertitleHtml}
@@ -237,16 +259,6 @@ function renderArticles() {
               <span class="article-card__summary-prefix">Summary:</span>
               <span class="article-card__summary-text">${escapedSummary}</span>
             </p>
-            <div class="article-card__action">
-              <a href="${escapedUrl}" class="article-btn article-btn--primary" target="_blank" rel="noopener noreferrer">
-                <span>Zum Artikel</span>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                  <polyline points="15 3 21 3 21 9"></polyline>
-                  <line x1="10" y1="14" x2="21" y2="3"></line>
-                </svg>
-              </a>
-            </div>
           </div>
         </article>
       `;
@@ -255,36 +267,37 @@ function renderArticles() {
 
   articlesContainer.innerHTML = articlesHtml;
 
-  // Setup single-open accordion click & keyboard interaction for articles
-  setupAccordionInteraction(articlesContainer, ".article-card");
+  // Setup permalink trigger click & keyboard interaction for articles
+  setupCardInteractions(articlesContainer, "article");
 }
 
-function setupAccordionInteraction(container, selector) {
-  const cards = container.querySelectorAll(selector);
-
-  function closeAllCardsExcept(targetCard) {
-    cards.forEach((c) => {
-      if (c !== targetCard && c.classList.contains("is-expanded")) {
-        collapseCard(c);
-      }
-    });
-  }
+function setupCardInteractions(container, type) {
+  const cards = container.querySelectorAll(".article-card");
 
   cards.forEach((card) => {
     card.addEventListener("click", (e) => {
-      // If clicking button/link, allow standard link behavior
-      if (e.target.closest("a.article-btn")) {
+      // If clicking media link when expanded, allow opening external link
+      if (card.classList.contains("is-expanded") && e.target.closest("a.article-card__media-link")) {
         return;
       }
 
+      // If clicking close button
+      if (e.target.closest("[data-close-item]")) {
+        e.preventDefault();
+        e.stopPropagation();
+        closeCurrentItem();
+        return;
+      }
+
+      // If clicking collapsed card, navigate to its permalink
       if (card.classList.contains("is-collapsed")) {
-        closeAllCardsExcept(card);
-        expandCard(card);
-        requestAnimationFrame(() => {
-          card.scrollIntoView({ behavior: "smooth", block: "nearest" });
-        });
-      } else {
-        collapseCard(card);
+        e.preventDefault();
+        const itemId = card.getAttribute("data-item-id");
+        if (itemId) {
+          saveCurrentScrollPosition();
+          const targetHash = `${type}-${itemId}`;
+          window.location.hash = `#${targetHash}`;
+        }
       }
     });
 
@@ -294,16 +307,36 @@ function setupAccordionInteraction(container, selector) {
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
         if (card.classList.contains("is-collapsed")) {
-          closeAllCardsExcept(card);
-          expandCard(card);
-          requestAnimationFrame(() => {
-            card.scrollIntoView({ behavior: "smooth", block: "nearest" });
-          });
-        } else {
-          collapseCard(card);
+          const itemId = card.getAttribute("data-item-id");
+          if (itemId) {
+            saveCurrentScrollPosition();
+            const targetHash = `${type}-${itemId}`;
+            window.location.hash = `#${targetHash}`;
+          }
         }
       }
     });
+  });
+}
+
+function saveCurrentScrollPosition() {
+  const currentHash = (window.location.hash.replace("#", "") || "info").toLowerCase();
+  if (!currentHash.startsWith("video-") && !currentHash.startsWith("article-")) {
+    navigationHistory.previousView = currentHash === "welcome" ? "info" : currentHash;
+    navigationHistory.previousScrollY = window.scrollY || window.pageYOffset || 0;
+  }
+}
+
+function closeCurrentItem() {
+  const returnView = navigationHistory.previousView || "info";
+  const returnScrollY = navigationHistory.previousScrollY || 0;
+
+  // Update hash back to the originating page view
+  window.location.hash = `#${returnView}`;
+
+  // Restore scroll position smoothly
+  requestAnimationFrame(() => {
+    window.scrollTo({ top: returnScrollY, behavior: "smooth" });
   });
 }
 
@@ -311,12 +344,16 @@ function expandCard(card) {
   card.classList.remove("is-collapsed");
   card.classList.add("is-expanded");
   card.setAttribute("aria-expanded", "true");
+  const mediaLink = card.querySelector(".article-card__media-link");
+  if (mediaLink) mediaLink.removeAttribute("tabindex");
 }
 
 function collapseCard(card) {
   card.classList.remove("is-expanded");
   card.classList.add("is-collapsed");
   card.setAttribute("aria-expanded", "false");
+  const mediaLink = card.querySelector(".article-card__media-link");
+  if (mediaLink) mediaLink.setAttribute("tabindex", "-1");
 }
 
 function escapeHtml(str) {
@@ -408,45 +445,114 @@ function initThemeToggle() {
   });
 }
 
-/* Page Navigation */
+/* Page Navigation & Permalinks */
 function initNavigation() {
   const hamburgerBtn = document.querySelector(".site-nav__hamburger");
   const navList = document.querySelector(".site-nav__list");
   const navLinks = document.querySelectorAll("[data-nav-target]");
   const pageViews = document.querySelectorAll(".page-view");
+  const videosContainer = document.getElementById("videos-container");
+  const articlesContainer = document.getElementById("articles-container");
 
   // Keep hamburger hidden as requested
   if (hamburgerBtn) {
     hamburgerBtn.style.display = "none";
   }
 
-  // Smooth, fast view switching
-  function switchView(targetId) {
-    // Map welcome alias to info
-    if (targetId === "welcome") {
-      targetId = "info";
+  function handleRoute(rawHash) {
+    let hash = (rawHash || "info").replace("#", "").toLowerCase();
+    if (hash === "welcome" || !hash) hash = "info";
+
+    // 1. Check if hash is a video permalink (#video-[id])
+    if (hash.startsWith("video-")) {
+      const videoId = hash.replace("video-", "");
+      showPermalinkItem("videos", "video", videoId);
+      return;
     }
 
-    const targetSection = document.getElementById(`view-${targetId}`);
+    // 2. Check if hash is an article permalink (#article-[id])
+    if (hash.startsWith("article-")) {
+      const articleId = hash.replace("article-", "");
+      showPermalinkItem("articles", "article", articleId);
+      return;
+    }
+
+    // 3. Regular view switching
+    showStandardView(hash);
+  }
+
+  function showPermalinkItem(viewId, itemType, itemId) {
+    const targetSection = document.getElementById(`view-${viewId}`);
     if (!targetSection) return;
 
     // Update active nav link
+    updateNavLinks(viewId);
+
+    // Switch active view section
+    activateSection(targetSection);
+
+    // Container configuration for single expanded card
+    const container = itemType === "video" ? videosContainer : articlesContainer;
+    if (container) {
+      container.setAttribute("data-single-active", "true");
+      const cards = container.querySelectorAll(".article-card");
+      let foundCard = null;
+
+      cards.forEach((c) => {
+        if (c.getAttribute("data-item-id") === itemId) {
+          expandCard(c);
+          foundCard = c;
+        } else {
+          collapseCard(c);
+        }
+      });
+
+      if (foundCard) {
+        requestAnimationFrame(() => {
+          foundCard.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      }
+    }
+  }
+
+  function showStandardView(viewId) {
+    const targetSection = document.getElementById(`view-${viewId}`);
+    if (!targetSection) return;
+
+    // Reset single active attributes and collapse all cards
+    if (videosContainer) {
+      videosContainer.removeAttribute("data-single-active");
+      videosContainer.querySelectorAll(".article-card").forEach(collapseCard);
+    }
+    if (articlesContainer) {
+      articlesContainer.removeAttribute("data-single-active");
+      articlesContainer.querySelectorAll(".article-card").forEach(collapseCard);
+    }
+
+    // Update active nav link
+    updateNavLinks(viewId);
+
+    // Switch view section
+    activateSection(targetSection);
+  }
+
+  function updateNavLinks(activeTarget) {
     navLinks.forEach((link) => {
       const linkTarget = link.getAttribute("data-nav-target");
-      if (link.closest(".site-nav__list") && linkTarget === targetId) {
+      if (link.closest(".site-nav__list") && linkTarget === activeTarget) {
         link.classList.add("active");
       } else if (link.closest(".site-nav__list")) {
         link.classList.remove("active");
       }
     });
 
-    // Close mobile menu if open
     if (navList && navList.classList.contains("open")) {
       navList.classList.remove("open");
       if (hamburgerBtn) hamburgerBtn.setAttribute("aria-expanded", "false");
     }
+  }
 
-    // Fast transition between views
+  function activateSection(targetSection) {
     pageViews.forEach((view) => {
       if (view === targetSection) {
         view.classList.add("active");
@@ -458,45 +564,25 @@ function initNavigation() {
         view.classList.remove("active");
       }
     });
-
-    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  // Initialize initial visible state
-  const activeView = document.querySelector(".page-view.active");
-  if (activeView) {
-    requestAnimationFrame(() => {
-      activeView.classList.add("visible");
-    });
-  }
-
-  // Attach click listeners to any element with data-nav-target (nav links, feature tiles, inline links)
+  // Attach click listeners to any element with data-nav-target
   document.addEventListener("click", (e) => {
     const targetElement = e.target.closest("[data-nav-target]");
     if (targetElement) {
       const targetId = targetElement.getAttribute("data-nav-target");
-      const mappedTargetId = targetId === "welcome" ? "info" : targetId;
-      if (mappedTargetId && document.getElementById(`view-${mappedTargetId}`)) {
-        e.preventDefault();
-        switchView(mappedTargetId);
-        history.pushState(null, "", `#${mappedTargetId}`);
-      }
+      saveCurrentScrollPosition();
+      window.location.hash = `#${targetId}`;
     }
   });
 
-  // Handle browser back/forward and initial hash load
+  // Handle browser back/forward navigation
   window.addEventListener("popstate", () => {
-    let currentHash = window.location.hash.replace("#", "") || "info";
-    if (currentHash === "welcome") currentHash = "info";
-    if (document.getElementById(`view-${currentHash}`)) {
-      switchView(currentHash);
-    }
+    handleRoute(window.location.hash);
   });
 
-  let initialHash = window.location.hash.replace("#", "");
-  if (initialHash === "welcome") initialHash = "info";
-  if (initialHash && document.getElementById(`view-${initialHash}`)) {
-    switchView(initialHash);
-  }
+  // Initial load
+  handleRoute(window.location.hash);
 }
+
 

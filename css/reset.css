@@ -10,12 +10,14 @@
 html {
   -webkit-text-size-adjust: 100%;
   tab-size: 4;
+  background-color: #171311;
 }
 
 body {
   min-height: 100vh;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  background-color: #171311;
 }
 
 img,

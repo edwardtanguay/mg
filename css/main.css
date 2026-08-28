@@ -584,27 +584,27 @@ body {
   letter-spacing: 0.06em;
   padding: 0.15rem 0.5rem;
   border-radius: 4px;
-  background-color: #fee2e2;
-  color: #b91c1c;
+  background-color: #dcfce7;
+  color: #15803d;
 }
 
 [data-theme="dark"] .newest-item-row__badge {
-  background-color: #451a1a;
-  color: #fca5a5;
+  background-color: #143521;
+  color: #86efac;
 }
 
 .newest-item-row__badge--video,
 .newest-item-row__badge--article,
 .newest-item-row__badge--concept {
-  background-color: #fee2e2;
-  color: #b91c1c;
+  background-color: #dcfce7;
+  color: #15803d;
 }
 
 [data-theme="dark"] .newest-item-row__badge--video,
 [data-theme="dark"] .newest-item-row__badge--article,
 [data-theme="dark"] .newest-item-row__badge--concept {
-  background-color: #451a1a;
-  color: #fca5a5;
+  background-color: #143521;
+  color: #86efac;
 }
 
 /* Aktuelles relative date: plain yellow text for recent (<= 7 days) */
